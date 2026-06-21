@@ -5,8 +5,13 @@
 
 import { buildSystemPrompt } from './system-prompt.ts';
 import { isLottieJson, autoFixLottie, validateLottie } from './schema.ts';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+
+// Dynamic imports for Node.js-only operations (used in CLI scripts)
+const getNodeFs = async () => {
+  const fs = await import('fs');
+  const path = await import('path');
+  return { fs, path };
+};
 
 // ── Provider configs ─────────────────────────────────────────────────────
 
@@ -243,8 +248,11 @@ export async function generateToFile(
     process.exit(1);
   }
 
-  const outputPath = join(process.cwd(), 'public/animations', filename);
-  writeFileSync(outputPath, JSON.stringify(result.animation, null, 2));
+  // @ts-ignore - Dynamic imports for Node.js-only fs operations
+  const { fs, path } = await getNodeFs();
+  const outputPath = path.join(process.cwd(), 'public/animations', filename);
+  // @ts-ignore - Dynamic imports for Node.js-only fs operations
+  fs.writeFileSync(outputPath, JSON.stringify(result.animation, null, 2));
 
   console.log(`\n✅ Saved to ${outputPath}`);
   console.log(`Provider: ${result.provider} (${result.model})`);

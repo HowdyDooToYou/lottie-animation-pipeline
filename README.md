@@ -1,11 +1,11 @@
-# MoreProof Lottie Pipeline 🎬
+# Lottie Animation Pipeline 🎬
 
-Lottie animation rendering, generation, and asset management for [moreproof.dev](https://moreproof.dev).
+Lottie animation rendering, generation, and asset management. A reusable pipeline for any project needing Lottie animations.
 
 ## Quick Start
 
 ```bash
-cd moreproof-lottie
+cd /home/tempest/lottie-animation-pipeline
 npm install
 npm run dev          # Start preview + API on :3300
 ```
@@ -71,7 +71,7 @@ Drag any `.json` Lottie file into the Animations panel for instant preview with 
 ## Architecture
 
 ```
-moreproof-lottie/
+lottie-animation-pipeline/
 ├── src/
 │   ├── components/         # React preview components
 │   │   ├── LottiePreview   # Player with playback controls
@@ -134,7 +134,7 @@ charcoal: #333844 → [0.20, 0.22, 0.27, 1]
 - [ ] Add export pipeline (MP4/WebM/GIF via headless Chrome + FFmpeg)
 - [ ] Integrate LottieFiles marketplace search
 - [ ] Add interactive state machine support (`.lottie` format)
-- [ ] Deploy preview as a shareable tool at moreproof.dev/lottie
+- [ ] Deploy preview as a shareable tool (e.g. moreproof.dev/lottie)
 - [ ] Add ComfyUI/OmniLottie integration for VLM-based generation
 - [ ] Build animation library with tagging and search
 
