@@ -8,3 +8,6 @@ dist/
 public/animations/generated-*.json
 public/animations/pulse-test.json
 public/animations/test-*.json
+
+# Staging iterations are ephemeral — gitignore
+public/animations/staging/
