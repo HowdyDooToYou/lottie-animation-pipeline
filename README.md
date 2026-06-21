@@ -139,7 +139,6 @@ charcoal: #333844 → [0.20, 0.22, 0.27, 1]
 - [ ] Deploy preview as a shareable tool at moreproof.dev/lottie
 - [ ] Add ComfyUI/OmniLottie integration for VLM-based generation
 - [ ] Build animation library with tagging and search
-- [ ] Build animation library with tagging and search
 
 ## References
 
