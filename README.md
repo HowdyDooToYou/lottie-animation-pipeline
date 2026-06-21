@@ -12,9 +12,39 @@ npm run dev          # Start preview + API on :3300
 
 ## Usage
 
-### CLI Generation
+### Iteration Workflow
+
+Generate → Iterate → Promote → Clean
+
 ```bash
-# Generate from prompt (uses local Ollama by default — $0/run)
+# 1. Generate initial version
+npm run gen -- hero "slide transition with brand colors"
+
+# 2. Preview in public/animations/staging/hero-current.json, iterate prompts
+npm run gen -- hero "smoother slide with gold accent"
+# Previous version archived: staging/hero-2026-06-21T01-15-56.json
+
+# 3. When confirmed, promote to final/
+npm run promote hero
+
+# 4. Clean up staging
+npm run cleanup hero          # Clean specific animation's staging
+npm run cleanup --all         # Clean all staging
+```
+
+**Directory structure:**
+```
+public/animations/
+├── staging/          # Iteration sandbox (gitignored)
+│   ├── <name>-current.json
+│   └── <name>-<ts>.json    # Archived iterations
+└── final/            # Production-ready (committed)
+    └── <name>.json
+```
+
+### CLI Generation (Direct)
+```bash
+# Generate and save directly (useful for scripts/batch)
 npm run gen -- "pulsing circle in brand blue" my-animation.json
 
 # With motion preset
@@ -108,6 +138,7 @@ charcoal: #333844 → [0.20, 0.22, 0.27, 1]
 - [ ] Add interactive state machine support (`.lottie` format)
 - [ ] Deploy preview as a shareable tool at moreproof.dev/lottie
 - [ ] Add ComfyUI/OmniLottie integration for VLM-based generation
+- [ ] Build animation library with tagging and search
 - [ ] Build animation library with tagging and search
 
 ## References
