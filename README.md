@@ -14,44 +14,42 @@ npm run dev          # Start preview + API on :3300
 
 ### Iteration Workflow
 
-Generate → Iterate → Promote → Clean
+Generate → Quality Gate → Auto-Promote (like proposal-operator)
 
 ```bash
-# 1. Generate initial version
-npm run gen -- hero "slide transition with brand colors"
+# Generate (quality-gated loop, up to 3 iterations)
+npm run gen -- hero "sliding indicator bars with blue and gold"
 
-# 2. Preview in public/animations/staging/hero-current.json, iterate prompts
-npm run gen -- hero "smoother slide with gold accent"
-# Previous version archived: staging/hero-2026-06-21T01-15-56.json
-
-# 3. When confirmed, promote to final/
-npm run promote hero
-
-# 4. Clean up staging
-npm run cleanup hero          # Clean specific animation's staging
-npm run cleanup --all         # Clean all staging
+# That's it. Final animations land in public/animations/final/ directly.
+# If the quality gate passes (score >= 60/100), it auto-promotes.
+# If not, the system retries up to 3 times with refined prompts.
+# Best result is always saved, even if it doesn't reach threshold.
 ```
 
-**Directory structure:**
-```
-public/animations/
-├── staging/          # Iteration sandbox (gitignored)
-│   ├── <name>-current.json
-│   └── <name>-<ts>.json    # Archived iterations
-└── final/            # Production-ready (committed)
-    └── <name>.json
-```
+**Quality gate checks:**
+1. Valid Lottie JSON structure (zod schema + auto-fix)
+2. Duration within 0.25–10s bounds
+3. Minimum 2 shape layers
+4. Uses brand colors from tokens
+5. Has animated keyframes (not static)
+6. Transform-based animation (no shape geometry hacks)
 
-### CLI Generation (Direct)
+**Motion design baked into the AI prompt:**
+- Exponential easings only (ease-out-quart, ease-out-expo)
+- Stagger between layers (2–4 frames)
+- Transforms + opacity only (Impeccable rule)
+- No bounce/elastic — that's AI slop
+
+**Files in `public/animations/final/` are confirmed assets.**
+Never delete without asking the user.
+
+### CLI (Direct)
 ```bash
-# Generate and save directly (useful for scripts/batch)
-npm run gen -- "pulsing circle in brand blue" my-animation.json
-
-# With motion preset
-npm run gen -- "slide transition" slide.json premium
-npm run gen -- "success checkmark" check.json energetic
-
-# Presets: premium | energetic | subtle | technical
+# Motion presets
+npm run gen -- hero "page slide" premium
+npm run gen -- cta "button pulse" energetic
+npm run gen -- idle "ambient breathing" subtle
+npm run gen -- chart "bar chart animate" technical
 ```
 
 ### Browser Generation
