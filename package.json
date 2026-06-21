@@ -10,8 +10,6 @@
     "validate": "tsx scripts/validate.ts",
     "generate": "tsx scripts/generate.ts",
     "gen": "tsx scripts/generate.ts",
-    "promote": "tsx scripts/promote.ts",
-    "cleanup": "tsx scripts/cleanup.ts",
     "lint": "eslint src/"
   },
   "dependencies": {

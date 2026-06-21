@@ -4,10 +4,6 @@ dist/
 *.log
 .DS_Store
 
-# Generated animations (keep the directory, ignore generated outputs)
-public/animations/generated-*.json
-public/animations/pulse-test.json
+# Test artifacts and ephemeral files
 public/animations/test-*.json
-
-# Staging iterations are ephemeral — gitignore
 public/animations/staging/

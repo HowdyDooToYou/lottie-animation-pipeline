@@ -1,56 +1,56 @@
 #!/usr/bin/env tsx
 /**
- * Generate a staged Lottie animation via the AI pipeline.
- *
- * Usage:
- *   tsx scripts/generate.ts <name> "<prompt>" [preset]
- *   npm run gen -- slide "slide transition" premium
- *
- * Output goes to public/animations/staging/<name>-current.json
- * Previous iterations are archived with timestamps in the same folder.
- * Use `npm run promote <name>` to move to final/
+ * CLI entry point for quality-gated Lottie generation.
+ * Thin wrapper: parse args → call generateWithQualityGate → report.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { generateToFile } from '../src/generator/client.ts';
+import { generateWithQualityGate } from '../src/generator/index.ts';
 
 const name = process.argv[2];
 const prompt = process.argv[3];
 const preset = process.argv[4] as 'premium' | 'energetic' | 'subtle' | 'technical' | undefined;
 
 if (!name || !prompt) {
-  console.log('Usage: tsx scripts/generate.ts <name> "<prompt>" [preset]');
-  console.log('');
-  console.log('Examples:');
-  console.log('  npm run gen -- pulse "pulsing circle in brand blue"');
-  console.log('  npm run gen -- slide "slide transition" premium');
-  console.log('  npm run gen -- success "checkmark animation" energetic');
-  console.log('');
-  console.log('Presets: premium | energetic | subtle | technical');
-  console.log('');
-  console.log('After confirming the animation, promote it:');
-  console.log('  npm run promote <name>');
+  console.log(`
+Usage: tsx scripts/generate.ts <name> "<prompt>" [preset]
+
+Quality-gated generation:
+  - Generates from prompt (local Ollama → OpenRouter fallback)
+  - Runs quality gate each iteration (valid JSON + brand + motion + animation)
+  - Auto-promotes to final/<name>.json when score >= 60
+  - Up to 3 iterations with refined prompts
+  - Saves best result even if never reaches threshold
+
+Presets: premium | energetic | subtle | technical
+
+Examples:
+  tsx scripts/generate.ts hero "sliding indicator bars" premium
+  tsx scripts/generate.ts pulse "pulsing circle in blue"
+  tsx scripts/generate.ts transition "smooth page slide" technical
+`);
   process.exit(1);
 }
 
-const stagingDir = path.join(process.cwd(), 'public/animations/staging');
-if (!fs.existsSync(stagingDir)) {
-  fs.mkdirSync(stagingDir, { recursive: true });
-}
+(async () => {
+  const result = await generateWithQualityGate({
+    name,
+    prompt,
+    preset,
+  });
 
-const currentFile = path.join(stagingDir, `${name}-current.json`);
-
-// Archive previous current version if it exists
-if (fs.existsSync(currentFile)) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const archiveFile = path.join(stagingDir, `${name}-${timestamp}.json`);
-  fs.renameSync(currentFile, archiveFile);
-  console.log(`📦 Archived previous version: ${name}-${timestamp}.json`);
-}
-
-// Generate new version to staging
-await generateToFile(prompt, `staging/${name}-current.json`, preset);
-
-console.log(`\n🔄 Iterate: npm run gen -- ${name} "new prompt" [preset]`);
-console.log(`📤 When ready: npm run promote ${name}`);
+  console.log('\n' + '─'.repeat(50));
+  console.log(`Result: ${result.passed ? '✅ PASSED' : '⚠️ SAVED (best effort)'}`);
+  console.log(`Score: ${result.score}/100`);
+  console.log(`Iterations: ${result.iterations}`);
+  console.log(`Output: ${result.path}`);
+  console.log(`Provider: ${result.provider} (${result.model})`);
+  if (result.strengths.length) {
+    console.log(`Strengths: ${result.strengths.join(', ')}`);
+  }
+  if (result.issues.length) {
+    console.log(`Issues: ${result.issues.join(', ')}`);
+  }
+})().catch((err) => {
+  console.error('❌', (err as Error).message);
+  process.exit(1);
+});

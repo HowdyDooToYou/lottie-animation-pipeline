@@ -77,6 +77,21 @@ When no specific motion is requested, use "${preset || 'premium'}" style:
 
 ${LOTTIE_CHEATSHEET}
 
+## Motion Design (Impeccable Principles)
+Follow these strictly — they separate Framer-tier animations from generic AI slop:
+
+- **Timing**: 100–150ms = instant feedback, 200–500ms = transitions, 500–1000ms = layout shifts
+- **Easing only**: Use exponential easings — ease-out-quart (0.25,1,0.5,1), ease-out-expo (0.19,1,0.22,1). NEVER use bounce, elastic, or linear (except for spinners).
+- **Exits faster than enters**: If entrance is 12 frames, exit should be ~8 frames.
+- **Transforms & opacity only**: Animate position(p), scale(s), rotation(r), opacity(o) in ks. Never shape geometry directly for motion.
+- **Stagger**: Multiple elements should animate in sequence (stagger by 2-4 frames each), not all at once.
+- **Minimal**: 2–6 layers with clear intent beats 15 layers of noise.
+
+### Easing in Lottie keyframes
+- Ease-out: in tangent = {x:[0.25], y:[1]}, out tangent = {x:[0.5], y:[1]} on the KEYFRAME
+- Ease-in: reverse the tangents
+- For cubic bezier: i: {x: [0.25], y: [0.1]}, o: {x: [0.25], y: [1]}
+
 ## Rules
 1. Output ONLY valid JSON — no markdown fences, no commentary
 2. Use brand colors from the palette above
