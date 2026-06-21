@@ -82,8 +82,8 @@ lottie-animation-pipeline/
 │   │   ├── system-prompt   # AI generation prompt + cheatsheet
 │   │   ├── schema          # Zod validation for Lottie JSON
 │   │   └── index           # Pipeline exports
-│   ├── brand/              # MoreProof design tokens
-│   │   └── moreproof-tokens  # Colors, motion presets, helpers
+│   ├── brand/              # Design tokens
+│   │   └── design-tokens   # Colors, motion presets, helpers
 │   ├── App.tsx             # Main app with generate button
 │   └── styles.css          # Dark theme UI
 ├── public/animations/      # Generated + imported animations
@@ -134,7 +134,7 @@ charcoal: #333844 → [0.20, 0.22, 0.27, 1]
 - [ ] Add export pipeline (MP4/WebM/GIF via headless Chrome + FFmpeg)
 - [ ] Integrate LottieFiles marketplace search
 - [ ] Add interactive state machine support (`.lottie` format)
-- [ ] Deploy preview as a shareable tool (e.g. moreproof.dev/lottie)
+- [ ] Deploy preview as a shareable tool
 - [ ] Add ComfyUI/OmniLottie integration for VLM-based generation
 - [ ] Build animation library with tagging and search
 

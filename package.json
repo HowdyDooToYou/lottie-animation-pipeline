@@ -1,7 +1,7 @@
 {
   "name": "lottie-animation-pipeline",
   "version": "0.1.0",
-  "description": "Lottie animation pipeline and generator for MoreProof",
+  "description": "AI-powered Lottie animation generation pipeline with zod validation and brand tokens",
   "type": "module",
   "scripts": {
     "dev": "vite",

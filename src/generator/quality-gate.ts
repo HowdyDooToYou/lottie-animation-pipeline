@@ -4,7 +4,7 @@
  * Follows the proposal-operator pattern: run gate, iterate if fails, promote when passing.
  */
 
-import { BRAND_COLORS } from '../brand/moreproof-tokens.ts';
+import { BRAND_COLORS } from '../brand/design-tokens.ts';
 import { isLottieJson } from './schema.ts';
 
 export interface QualityReport {

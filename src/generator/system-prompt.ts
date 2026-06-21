@@ -4,7 +4,7 @@
  * for first-shot valid JSON generation.
  */
 
-import { BRAND_COLORS, MOTION_PRESETS } from '../brand/moreproof-tokens.ts';
+import { BRAND_COLORS, MOTION_PRESETS } from '../brand/design-tokens.ts';
 
 export const LOTTIE_CHEATSHEET = `
 ## Bodymovin/Lottie JSON v5.7+ Cheatsheet
@@ -36,8 +36,8 @@ export const LOTTIE_CHEATSHEET = `
 
 ### Colors
 - RGBA arrays in 0..1 space, NOT 0..255
-- Example: MoreProof electric blue = [0.25, 0.56, 0.96, 1.0]
-- Example: MoreProof gold = [1.0, 0.76, 0.25, 1.0]
+- Example: electric blue = [0.25, 0.56, 0.96, 1.0]
+- Example: gold = [1.0, 0.76, 0.25, 1.0]
 - Example: White = [1, 1, 1, 1]
 
 ### Bezier paths
@@ -63,7 +63,7 @@ export function buildSystemPrompt(preset?: keyof typeof MOTION_PRESETS): string 
     .map(([name, val]) => `- ${name}: [${val.r}, ${val.g}, ${val.b}, ${val.a}]`)
     .join('\n');
 
-  return `You are a Lottie animation generator for the MoreProof brand.
+  return `You are a Lottie animation generator for polished brand animations.
 You generate valid Bodymovin/Bodymovin JSON (Lottie v5.7+) for short, polished animations.
 
 ## Brand Colors (RGBA 0..1 space)
@@ -108,7 +108,7 @@ Call render_lottie with the complete JSON that plays standalone.`;
 
 export const FEW_SHOT_EXAMPLES = {
   pulsingCircle: {
-    description: 'A pulsing circle using MoreProof electric blue',
+    description: 'A pulsing circle using electric blue',
     prompt: 'Pulsing circle in brand blue',
     animation: {
       v: '5.7.4', fr: 60, ip: 0, op: 120, w: 512, h: 512,

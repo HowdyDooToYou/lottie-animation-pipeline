@@ -1,5 +1,5 @@
 /**
- * MoreProof brand tokens for Lottie generation.
+ * Design tokens for Lottie generation.
  * Central source of truth for colors, motion presets, and design constraints.
  */
 
@@ -26,7 +26,7 @@ export const BRAND_COLORS = {
 export type BrandColor = keyof typeof BRAND_COLORS;
 
 /**
- * Motion presets — personality archetypes tuned for MoreProof's brand voice.
+ * Motion presets — personality archetypes tuned for polished brand animation.
  */
 export const MOTION_PRESETS = {
   premium: {
@@ -62,7 +62,7 @@ export const MOTION_PRESETS = {
 export type MotionPreset = keyof typeof MOTION_PRESETS;
 
 /**
- * Default Lottie canvas settings matching moreproof.dev viewport expectations.
+ * Default Lottie canvas settings.
  */
 export const DEFAULT_CANVAS = {
   width: 512,

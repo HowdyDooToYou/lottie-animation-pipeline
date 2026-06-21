@@ -96,7 +96,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎬 MoreProof Lottie Pipeline</h1>
+        <h1>🎬 Lottie Animation Pipeline</h1>
         <span className="version">v0.1.0</span>
       </header>
 

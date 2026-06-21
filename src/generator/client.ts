@@ -103,8 +103,8 @@ async function generateOpenRouter(
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENROUTER_KEY}`,
-        'HTTP-Referer': 'https://moreproof.dev',
-        'X-Title': 'MoreProof Lottie Generator',
+        'HTTP-Referer': 'https://github.com',
+        'X-Title': 'Lottie Animation Pipeline',
       },
       body: JSON.stringify({
         model,
