@@ -7,3 +7,7 @@ dist/
 # Test artifacts and ephemeral files
 public/animations/test-*.json
 public/animations/staging/
+
+# Generation artifacts (ephemeral per-run outputs)
+.cache/
+reports/
