@@ -206,6 +206,92 @@ body {
   margin-top: 16px;
 }
 
+.review-card {
+  width: 100%;
+  max-width: 512px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.review-card-header h3 {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.review-card-header p {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.review-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.review-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.review-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.review-metrics div,
+.review-generation {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.review-metrics div {
+  padding: 10px;
+}
+
+.review-metrics span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.review-metrics strong {
+  font-size: 13px;
+}
+
+.review-generation {
+  margin-top: 10px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
 .timeline-bar {
   height: 6px;
   background: var(--surface);

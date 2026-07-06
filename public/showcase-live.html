@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lottie Pipeline — Live Showcase</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" crossorigin="anonymous"></script>
+<style>
+  :root { --bg:#0b1020; --panel:#121a2b; --panel2:#0f1726; --text:#e8eefc; --muted:#9aa8c7; --border:#24314d; --blue:#408ff5; --gold:#ffc240; --mint:#40d6ab; --red:#ff7a7a; }
+  * { box-sizing: border-box }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; background:linear-gradient(180deg,#0a1220,#0b1020); color:var(--text) }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px }
+  .hero { background:var(--panel); border:1px solid var(--border); border-radius:20px; padding:24px 28px; margin-bottom:24px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+  .hero h1 { margin:0 0 8px; font-size:32px; letter-spacing:-.01em }
+  .hero p { margin:0; color:var(--muted); max-width:780px; line-height:1.55 }
+  .badge { display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--mint); background:rgba(64,214,171,.12); border:1px solid rgba(64,214,171,.35); padding:4px 10px; border-radius:999px; margin-top:14px }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 6px 20px rgba(0,0,0,.15) }
+  .card-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:12px }
+  .card h2 { margin:0 0 4px; font-size:18px }
+  .card .slug { color:var(--muted); font-size:12px; font-family:ui-monospace, monospace }
+  .stage { position:relative; height:220px; background: #0a1224; border:1px solid rgba(64,143,245,.2); border-radius:14px; overflow:hidden; margin-bottom: 14px }
+  .stage .empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; font-family:ui-monospace,monospace }
+  .stage .lottie-stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center }
+  .stage .lottie-stage svg { max-width: 100%; max-height: 100% }
+  .meta { display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+  .meta div { background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:8px }
+  .meta span { display:block; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em }
+  .meta strong { font-size:13px }
+  .row { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap }
+  .row button { background:var(--panel2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer }
+  .row button:hover { border-color:var(--blue) }
+  .footer { margin-top:28px; color:var(--muted); font-size:12px; text-align:center }
+  .error { color:var(--red); font-size:12px; margin-top:8px; font-family:ui-monospace,monospace; word-break:break-word }
+  @media (prefers-reduced-motion: reduce) {
+    .stage .lottie-stage { opacity: .6 }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>🎬 Lottie Pipeline — Live Render (Gemini 3.5 Flash)</h1>
+    <p>Every card below renders actual <code>public/animations/final/*.json</code> produced by the <strong>Gemini 3.5 Flash (Medium)</strong> generator via Google AI Pro subscription, rendered with <strong>lottie-web</strong> 5.12.2. Quality gate now enforces strict Lottie spec — not just "valid JSON" — catching missing <code>ip</code>/<code>op</code>, malformed <code>ks</code>, invalid shape groups, and garbage keys that broke earlier local-model outputs. 12.3% free tier quota consumed.</p>
+    <span class="badge" id="status">Loading…</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="footer">
+    Source: <code>src/generator/quality-gated-generate.ts</code> → <code>public/animations/final/</code> → validated by <code>scripts/validate.ts</code> → rendered here.
+  </div>
+</div>
+
+<script>
+const ASSETS = [
+  { file: 'pulse-ring-gemini.json',    label: 'Pulse Ring',        slug: 'pulse-ring' },
+  { file: 'hero-orbit-gemini.json',    label: 'Hero Orbit',        slug: 'hero-orbit' },
+  { file: 'indicator-bars-gemini.json',label: 'Indicator Bars',    slug: 'indicator-bars' },
+  { file: 'metric-rise-gemini.json',   label: 'Metric Rise',       slug: 'metric-rise' },
+  { file: 'spinning-dots-gemini.json', label: 'Spinning Dots',     slug: 'spinning-dots' },
+  { file: 'check-mark-gemini.json',    label: 'Check Mark',        slug: 'check-mark' },
+  { file: 'progress-ring-gemini.json', label: 'Progress Ring',     slug: 'progress-ring' },
+  { file: 'waveform-bars-gemini.json', label: 'Waveform Bars',     slug: 'waveform-bars' },
+  { file: 'gradient-flow-gemini.json', label: 'Gradient Flow',     slug: 'gradient-flow' },
+];
+
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+async function loadAsset(entry) {
+  const card = document.createElement('section');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-head">
+      <div>
+        <h2>${entry.label}</h2>
+        <p class="slug">${entry.file}</p>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="lottie-stage"></div>
+      <div class="empty" style="display:none">Loading…</div>
+    </div>
+    <div class="meta"></div>
+    <div class="row">
+      <button data-action="restart">Restart</button>
+      <button data-action="pause">Pause</button>
+      <button data-action="play">Play</button>
+      <button data-action="json">View JSON</button>
+    </div>
+    <div class="error" style="display:none"></div>
+  `;
+  const stageRoot = card.querySelector('.lottie-stage');
+  const emptyRoot = card.querySelector('.empty');
+  const metaRoot  = card.querySelector('.meta');
+  const errRoot   = card.querySelector('.error');
+  const btns      = card.querySelectorAll('.row button');
+
+  let anim = null;
+  let jsonData = null;
+
+  const showError = (msg) => {
+    emptyRoot.style.display = 'flex';
+    emptyRoot.textContent = 'Render failed';
+    errRoot.style.display = 'block';
+    errRoot.textContent = msg;
+  };
+
+  try {
+    const res = await fetch(`./animations/final/${entry.file}`, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    jsonData = await res.json();
+
+    metaRoot.innerHTML = `
+      <div><span>Version</span><strong>${jsonData.v || '?'}</strong></div>
+      <div><span>Size</span><strong>${jsonData.w}×${jsonData.h}</strong></div>
+      <div><span>FPS</span><strong>${jsonData.fr}</strong></div>
+      <div><span>Duration</span><strong>${((jsonData.op - jsonData.ip) / jsonData.fr).toFixed(2)}s</strong></div>
+      <div><span>Frames</span><strong>${jsonData.op - jsonData.ip}</strong></div>
+      <div><span>Layers</span><strong>${(jsonData.layers || []).length}</strong></div>
+    `;
+
+    try {
+      anim = lottie.loadAnimation({
+        container: stageRoot,
+        renderer: 'svg',
+        loop: true,
+        autoplay: !prefersReduced,
+        animationData: jsonData,
+        rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
+      });
+      emptyRoot.style.display = 'none';
+
+      anim.addEventListener('error', (e) => showError('lottie-web error: ' + (e && e.message || 'unknown')));
+
+      btns.forEach(b => b.addEventListener('click', () => {
+        if (!anim) return;
+        const action = b.dataset.action;
+        if (action === 'restart') anim.goToAndPlay(0, true);
+        if (action === 'pause') anim.pause();
+        if (action === 'play') anim.play();
+        if (action === 'json') window.open(`./animations/final/${entry.file}`, '_blank');
+      }));
+    } catch (e) {
+      showError('Render exception: ' + (e && e.message));
+    }
+  } catch (e) {
+    showError('Fetch/parse error: ' + (e && e.message));
+  }
+  return card;
+}
+
+(async function init() {
+  const status = document.getElementById('status');
+  const grid = document.getElementById('grid');
+  if (typeof lottie === 'undefined') {
+    status.textContent = '❌ lottie-web failed to load';
+    return;
+  }
+  status.textContent = `Rendering ${ASSETS.length} assets…`;
+  for (const entry of ASSETS) {
+    const card = await loadAsset(entry);
+    grid.appendChild(card);
+  }
+  status.textContent = `${ASSETS.length} assets rendered via lottie-web${prefersReduced ? ' (reduced-motion: paused)' : ''}`;
+})();
+</script>
+</body>
+</html>

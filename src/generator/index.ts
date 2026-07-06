@@ -2,7 +2,15 @@ export { buildSystemPrompt, FEW_SHOT_EXAMPLES, LOTTIE_CHEATSHEET } from './syste
 export { validateLottie, isLottieJson, autoFixLottie, LottieSchema } from './schema.ts';
 export type { LottieAnimation, LottieLayer } from './schema.ts';
 export { generateLottie, generateToFile } from './client.ts';
-export { qualityGate, refinePrompt, QUALITY_THRESHOLD, MAX_ITERATIONS } from './quality-gate.ts';
-export type { QualityReport } from './quality-gate.ts';
+export { qualityGate, summarizeAnimationPreview, refinePrompt, QUALITY_THRESHOLD, MAX_ITERATIONS } from './quality-gate.ts';
+export type { QualityReport, AnimationPreviewSummary } from './quality-gate.ts';
 export { generateWithQualityGate } from './quality-gated-generate.ts';
 export type { QualityGatedResult, GenerateOptions } from './quality-gated-generate.ts';
+export { ARCHETYPES, buildArchetypePrompt, buildVariantPlan } from './archetypes.ts';
+export type { LottieArchetype, VariantPlanItem } from './archetypes.ts';
+export { buildReviewCardData } from './review-card.ts';
+export type { AnimationGenerationMeta, ReviewCardData, ReviewCardInput } from './review-card.ts';
+export { renderShowcaseHtml } from './showcase.ts';
+export type { ShowcaseVariant } from './showcase.ts';
+export { RetryOrchestrator } from './retry-orchestrator.ts';
+export type { RetryPolicy, FailureType, AttemptRecord, GenerationResult } from './retry-orchestrator.ts';
