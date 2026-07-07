@@ -14,8 +14,7 @@
     "export": "tsx scripts/export.ts",
     "gen": "tsx scripts/generate.ts",
     "showcase": "tsx scripts/showcase.ts",
-    "test": "tsx --test src/**/*.test.ts",
-    "lint": "eslint src/"
+    "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
     "lottie-react": "^2.4.0",
@@ -28,6 +27,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "lottie-web": "^5.13.0",
     "puppeteer-core": "^25.3.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",

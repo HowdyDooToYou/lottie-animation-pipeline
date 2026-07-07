@@ -20,6 +20,10 @@ const getNodeFs = async () => {
 
 // ── Provider configs ─────────────────────────────────────────────────────
 
+// :21434 is intentional — NOT a typo for Ollama's standard :11434. On this
+// WSL2 host the native ollama is masked; a node bridge on :21434 forwards to
+// the Windows-side GPU ollama (see memory: reference_ollama_gpu_routing).
+// Override with OLLAMA_BASE on hosts with a standard local install.
 const OLLAMA_BASE = process.env.OLLAMA_BASE || 'http://127.0.0.1:21434/v1';
 const OLLAMA_FAST_MODEL = process.env.OLLAMA_FAST_MODEL || 'qwen2.5:7b';      // Fast, schema-following
 const OLLAMA_SMART_MODEL = process.env.OLLAMA_SMART_MODEL || 'gemma3:27b';    // Slower but better quality
