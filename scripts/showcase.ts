@@ -12,7 +12,7 @@ import {
 
 const theme = process.argv[2] || 'Revenue dashboard motion system';
 const limitArg = Number(process.argv[3] || 4);
-const outputPath = process.argv[4] || '/home/tempest/lottie-variant-showcase.html';
+const outputPath = process.argv[4] || `${process.cwd()}/lottie-variant-showcase.html`;
 const limit = Number.isFinite(limitArg) && limitArg > 0 ? Math.min(limitArg, 4) : 4;
 
 function fallbackAnimationFor(slug: string): { path: string; provider: string; model: string } | null {

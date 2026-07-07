@@ -2,7 +2,10 @@ import { useState, useCallback, useMemo } from 'react';
 import { LottiePreview } from './components/LottiePreview.tsx';
 import { Timeline } from './components/Timeline.tsx';
 import { AnimationList } from './components/AnimationList.tsx';
-import { buildSystemPrompt, FEW_SHOT_EXAMPLES, isLottieJson, autoFixLottie } from './generator/index.ts';
+// Import pure modules directly — generator/index.ts re-exports the Node CLI
+// client (fs/child_process), which would drag stubs into the browser bundle.
+import { buildSystemPrompt, FEW_SHOT_EXAMPLES } from './generator/system-prompt.ts';
+import { isLottieJson, autoFixLottie } from './generator/schema.ts';
 import { buildReviewCardData, type AnimationGenerationMeta } from './generator/review-card.ts';
 
 interface AnimationEntry {
