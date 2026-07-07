@@ -1,6 +1,11 @@
 /**
  * Lottie generation client with multi-provider fallback.
- * Cost hierarchy: Local Ollama (free) → OpenRouter free tier → OpenRouter cheap paid
+ * Cost hierarchy:
+ *   Gemini CLI (Google AI Pro OAuth quota, $0)
+ *   → Gemini API (AI Studio key, separate quota bucket, $0 on free tier)
+ *   → Local Ollama (free)
+ *   → OpenRouter free tier
+ *   → OpenRouter cheap paid
  */
 
 import { buildSystemPrompt } from './system-prompt.ts';
@@ -34,6 +39,34 @@ const OPENROUTER_KEY = (() => {
 const OPENROUTER_FREE_MODEL = 'qwen/qwen3-coder:free'; // Or: 'openrouter/free'
 const OPENROUTER_CHEAP_MODEL = 'deepseek/deepseek-chat-v3-0324:free'; // Cheap fallback
 
+// Antigravity CLI (agy): the official channel for Google AI Pro subscription
+// quota since Gemini CLI sunset for Pro/Ultra users (2026-06-18). Headless
+// via `agy -p`. Auth: browser OAuth cached in libsecret, or ANTIGRAVITY_API_KEY.
+const AGY_BIN = process.env.AGY_BIN
+  || `${process.env.HOME || '/home/tempest'}/.local/bin/agy`;
+const ANTIGRAVITY_MODEL = process.env.ANTIGRAVITY_MODEL || 'Gemini 3.5 Flash (Medium)';
+const AGY_TIMEOUT_MS = Number(process.env.AGY_TIMEOUT_MS) || 180_000;
+
+// Gemini (legacy buckets, kept as fallbacks):
+//   1. gemini CLI OAuth — sunset for AI Pro accounts; fails fast if unusable.
+//   2. Direct API with an AI Studio key — separate per-model free-tier quota.
+const GEMINI_CLI_BIN = process.env.GEMINI_CLI_BIN
+  || `${process.env.HOME || '/home/tempest'}/.local/bin/gemini`;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const GEMINI_CLI_TIMEOUT_MS = Number(process.env.GEMINI_CLI_TIMEOUT_MS) || 180_000;
+const GEMINI_DISABLED = process.env.LOTTIE_NO_GEMINI === '1';
+
+const GEMINI_API_KEY = (() => {
+  try {
+    const { execSync } = require('child_process');
+    const key = execSync('secret-tool lookup service gemini', { encoding: 'utf-8' }).trim();
+    if (key) return key;
+  } catch {
+    // secret-tool not available or key not set
+  }
+  return process.env.GEMINI_API_KEY || '';
+})();
+
 // ── Types ────────────────────────────────────────────────────────────────
 
 interface GenerationResult {
@@ -46,6 +79,7 @@ interface GenerationResult {
 }
 interface ProviderConfig {
   name: string;
+  model: string;
   generate: (systemPrompt: string, userPrompt: string) => Promise<string | null>;
 }
 
@@ -130,6 +164,165 @@ async function generateOpenRouter(
   }
 }
 
+// ── CLI providers (spawn a headless coding-agent CLI) ────────────────────
+
+// Agentic CLIs block forever on interactive auth prompts when their cached
+// token is expired. Detect the prompt and bail so the chain can fall back.
+const AUTH_PROMPT_RE = /Opening authentication page|Do you want to continue\?|sign.?in|log.?in to|one.?time code|authoriz/i;
+
+async function runCliProvider(
+  label: string,
+  bin: string,
+  args: string[],
+  timeoutMs: number,
+  reauthHint: string,
+): Promise<string | null> {
+  if (typeof window !== 'undefined') return null; // Node-only provider
+
+  let spawn: typeof import('child_process').spawn;
+  try {
+    spawn = (await import('child_process')).spawn;
+    const fs = await import('fs');
+    if (!fs.existsSync(bin)) {
+      console.log(`${label} not found at ${bin}, skipping`);
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  return new Promise((resolve) => {
+    const child = spawn(bin, args, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      cwd: process.env.HOME,
+    });
+
+    let stdout = '';
+    let stderr = '';
+    let settled = false;
+
+    const finish = (value: string | null, reason?: string) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (reason) console.error(`${label}: ${reason}`);
+      if (!child.killed) child.kill('SIGKILL');
+      resolve(value);
+    };
+
+    const timer = setTimeout(
+      () => finish(null, `timed out after ${timeoutMs}ms`),
+      timeoutMs,
+    );
+
+    child.stdout.on('data', (chunk: Buffer) => {
+      stdout += chunk.toString();
+      // Only sniff early output for auth prompts — generated JSON payloads
+      // may legitimately contain matching words later in the stream.
+      if (stdout.length < 2000 && AUTH_PROMPT_RE.test(stdout)) {
+        finish(null, `auth required — ${reauthHint}`);
+      }
+    });
+    child.stderr.on('data', (chunk: Buffer) => {
+      stderr += chunk.toString();
+      if (stderr.length < 2000 && AUTH_PROMPT_RE.test(stderr)) {
+        finish(null, `auth required — ${reauthHint}`);
+      }
+    });
+
+    child.on('error', (err) => finish(null, `failed to launch: ${err.message}`));
+    child.on('close', (code) => {
+      if (code !== 0) {
+        finish(null, `exited ${code}: ${stderr.slice(0, 200)}`);
+      } else {
+        finish(stdout.trim() || null);
+      }
+    });
+  });
+}
+
+// Neither CLI has a separate system-prompt flag in headless mode; prepend it.
+function cliPrompt(systemPrompt: string, userPrompt: string): string {
+  return `${systemPrompt}\n\n---\n\n${userPrompt}\n\nRespond with the raw Lottie JSON only. No markdown, no commentary, no tool calls.`;
+}
+
+// ── Provider: Antigravity CLI (Google AI Pro subscription quota) ─────────
+
+export async function generateAntigravityCli(
+  systemPrompt: string,
+  userPrompt: string,
+): Promise<string | null> {
+  return runCliProvider(
+    'Antigravity CLI',
+    AGY_BIN,
+    ['--model', ANTIGRAVITY_MODEL, '-p', cliPrompt(systemPrompt, userPrompt)],
+    AGY_TIMEOUT_MS,
+    'run `agy` interactively once to sign in, or set ANTIGRAVITY_API_KEY',
+  );
+}
+
+// ── Provider: Gemini CLI (legacy — sunset for AI Pro accounts) ───────────
+
+export async function generateGeminiCli(
+  systemPrompt: string,
+  userPrompt: string,
+): Promise<string | null> {
+  return runCliProvider(
+    'Gemini CLI',
+    GEMINI_CLI_BIN,
+    ['--skip-trust', '-m', GEMINI_MODEL, '-p', cliPrompt(systemPrompt, userPrompt)],
+    GEMINI_CLI_TIMEOUT_MS,
+    'run `gemini` interactively once to re-authenticate',
+  );
+}
+
+// ── Provider: Gemini API (AI Studio key, separate quota bucket) ──────────
+
+async function generateGeminiApi(
+  systemPrompt: string,
+  userPrompt: string,
+): Promise<string | null> {
+  if (!GEMINI_API_KEY) {
+    console.log('Gemini API key not set (secret-tool service gemini / GEMINI_API_KEY), skipping');
+    return null;
+  }
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': GEMINI_API_KEY,
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 8192,
+            responseMimeType: 'application/json',
+          },
+        }),
+        signal: AbortSignal.timeout(60_000),
+      },
+    );
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      console.error(`Gemini API error: ${res.status} ${res.statusText} ${body.slice(0, 200)}`);
+      return null;
+    }
+
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
+  } catch (err) {
+    console.error('Gemini API error:', (err as Error).message);
+    return null;
+  }
+}
+
 // ── Extraction & Validation ──────────────────────────────────────────────
 
 function extractJson(response: string): Record<string, unknown> | null {
@@ -162,22 +355,45 @@ export async function generateLottie(
 ): Promise<GenerationResult> {
   const systemPrompt = buildSystemPrompt(motionPreset);
 
-  // Provider chain: local first (fast then smart), then cloud fallbacks
+  // Provider chain: Google quota buckets first (Antigravity CLI = AI Pro sub,
+  // Gemini API = AI Studio key, legacy gemini CLI last of the three),
+  // then local Ollama, then OpenRouter fallbacks
   const providers: ProviderConfig[] = [
+    ...(GEMINI_DISABLED ? [] : [
+      {
+        name: `antigravity-cli(${ANTIGRAVITY_MODEL})`,
+        model: ANTIGRAVITY_MODEL,
+        generate: () => generateAntigravityCli(systemPrompt, userPrompt),
+      },
+      {
+        name: `gemini-api(${GEMINI_MODEL})`,
+        model: GEMINI_MODEL,
+        generate: () => generateGeminiApi(systemPrompt, userPrompt),
+      },
+      {
+        name: `gemini-cli(${GEMINI_MODEL})`,
+        model: GEMINI_MODEL,
+        generate: () => generateGeminiCli(systemPrompt, userPrompt),
+      },
+    ]),
     {
       name: `ollama-fast(${OLLAMA_FAST_MODEL})`,
+      model: OLLAMA_FAST_MODEL,
       generate: () => generateOllama(systemPrompt, userPrompt, OLLAMA_FAST_MODEL),
     },
     {
       name: `ollama-smart(${OLLAMA_SMART_MODEL})`,
+      model: OLLAMA_SMART_MODEL,
       generate: () => generateOllama(systemPrompt, userPrompt, OLLAMA_SMART_MODEL),
     },
     {
       name: 'openrouter-free',
+      model: OPENROUTER_FREE_MODEL,
       generate: () => generateOpenRouter(systemPrompt, userPrompt, OPENROUTER_FREE_MODEL),
     },
     {
       name: 'openrouter-cheap',
+      model: OPENROUTER_CHEAP_MODEL,
       generate: () => generateOpenRouter(systemPrompt, userPrompt, OPENROUTER_CHEAP_MODEL),
     },
   ];
@@ -198,7 +414,7 @@ export async function generateLottie(
       continue;
     }
 
-    // Validate
+    // Validate with auto-fix
     const isValid = isLottieJson(raw);
     if (!isValid) {
       console.warn(`[generate] ${provider.name} returned invalid Lottie, attempting auto-fix...`);
@@ -222,9 +438,7 @@ export async function generateLottie(
       success: true,
       animation: raw,
       provider: provider.name,
-      model: provider.name.includes('ollama')
-        ? (provider.name.includes('fast') ? OLLAMA_FAST_MODEL : OLLAMA_SMART_MODEL)
-        : (provider.name.includes('free') ? OPENROUTER_FREE_MODEL : OPENROUTER_CHEAP_MODEL),
+      model: provider.model,
     };
   }
 

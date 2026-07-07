@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "generated": "2026-07-06",
+  "animations": [
+    {
+      "id": "hero-orbit-01",
+      "archetype": "hero-orbit",
+      "name": "Site Header Orbit",
+      "params": { "width": 400, "height": 100, "color": "#408ff5", "duration": 120 },
+      "usage": "hero section background"
+    },
+    {
+      "id": "hero-orbit-card",
+      "archetype": "hero-orbit",
+      "name": "Orchestration Card Orbit",
+      "params": { "width": 200, "height": 200, "color": "#408ff5", "duration": 180 },
+      "usage": "moreproof hero orchestration card corner accent (square)"
+    },
+    {
+      "id": "pulse-ring-01",
+      "archetype": "pulse-ring",
+      "name": "Form Submit Loading",
+      "params": { "width": 200, "height": 200, "color": "#ffc240" },
+      "usage": "form submit / loading state"
+    },
+    {
+      "id": "indicator-bars-01",
+      "archetype": "indicator-bars",
+      "name": "Dashboard Indicator Bars",
+      "params": { "width": 300, "height": 120, "color": "#408ff5" },
+      "usage": "data visualization"
+    },
+    {
+      "id": "metric-rise-01",
+      "archetype": "metric-rise",
+      "name": "Growth Metric Bars",
+      "params": { "width": 300, "height": 200, "color": "#408ff5", "duration": 90 },
+      "usage": "growth / progress metrics"
+    },
+    {
+      "id": "spinning-dots-01",
+      "archetype": "spinning-dots",
+      "name": "Compact Loader",
+      "params": { "width": 120, "height": 120, "color": "#7aa2f7" },
+      "usage": "multi-stage loading"
+    },
+    {
+      "id": "check-mark-01",
+      "archetype": "check-mark",
+      "name": "Success Check",
+      "params": { "width": 160, "height": 160, "color": "#4ade80" },
+      "usage": "success / completion state"
+    },
+    {
+      "id": "progress-ring-01",
+      "archetype": "progress-ring",
+      "name": "Completion Ring",
+      "params": { "width": 200, "height": 200, "color": "#408ff5" },
+      "usage": "completion / progress tracking"
+    },
+    {
+      "id": "waveform-bars-01",
+      "archetype": "waveform-bars",
+      "name": "Signal Waveform",
+      "params": { "width": 300, "height": 100, "color": "#40d6ab" },
+      "usage": "audio / signal visualization"
+    },
+    {
+      "id": "gradient-flow-01",
+      "archetype": "gradient-flow",
+      "name": "Transition Backdrop",
+      "params": { "width": 600, "height": 200, "color": "#408ff5", "duration": 150 },
+      "usage": "transitions / background motion"
+    }
+  ]
+}

@@ -59,11 +59,29 @@ npm run gen -- chart "bar chart animate" technical
 4. Click **"✨ Generate from Prompt"**
 5. Animation appears in your list and auto-plays
 
+### Batch Generation (manifest-driven)
+```bash
+npm run generate:batch                        # all of animations/manifest.json (cached)
+npm run generate:batch -- --id pulse-ring-01  # one animation by id
+npm run generate:batch -- --force             # ignore cache
+npm run generate:batch -- --dry-run           # preview prompts only
+```
+Reports land in `reports/generation-<timestamp>.json`.
+
 ### Validate Animations
 ```bash
-npm run validate                    # Check public/animations/
-npm run validate path/to/dir        # Check specific directory
+npm run validate                    # Strict schema check, recursive (exits 1 on invalid)
+npm run validate -- path/to/dir     # Check specific directory
+npm run validate:render             # Headless-browser render test + screenshots
 ```
+
+### Export to a Project
+```bash
+npm run export -- --to /path/to/project/public/animations
+```
+Copies only strictly-valid JSON plus an `animations-manifest.json` index.
+
+**Full agent-facing docs: [LOTTIE_PIPELINE_GUIDE.md](LOTTIE_PIPELINE_GUIDE.md)**
 
 ### Drop Zone
 Drag any `.json` Lottie file into the Animations panel for instant preview with timeline scrubbing.
@@ -98,16 +116,22 @@ lottie-animation-pipeline/
 
 | Provider | Cost | Model | Speed | Use When |
 |----------|------|-------|-------|----------|
-| **Local Ollama (fast)** | **$0** | `qwen2.5:7b` | ~30s | Default — handles 80% of animations |
+| **Antigravity CLI** | **$0** | `gemini-3.5-flash` | ~10s | Default — Google AI Pro sub quota via `agy -p` |
+| Gemini API | $0 | `gemini-3.5-flash` | ~5s | Separate AI Studio key quota bucket |
+| Gemini CLI (legacy) | $0 | `gemini-3.5-flash` | fast-fail | Sunset for AI Pro accounts 2026-06-18 |
+| Local Ollama (fast) | $0 | `qwen2.5:7b` | ~30s | Cloud quota exhausted |
 | Local Ollama (smart) | $0 | `gemma3:27b` | ~90s | Complex animations with many layers |
 | OpenRouter free | $0 | `qwen3-coder:free` | ~5s | Fallback when Ollama is busy/offline |
 | OpenRouter cheap | ~$0.01 | `deepseek-chat` | ~3s | Last resort cloud fallback |
 
-**Typical cost: $0.00 per generation.** Uses local Ollama first, only hits cloud if local fails.
+**Typical cost: $0.00 per generation.** Gemini quota buckets first, then local Ollama, cloud paid last.
 
 ### Configuration (environment variables)
 
-OpenRouter key is auto-loaded from the Linux keyring (`secret-tool lookup service openrouter`). Falls back to `OPENROUTER_API_KEY` env var if keyring lookup fails.
+- Antigravity: `agy` OAuth session (run `agy` interactively once) or `ANTIGRAVITY_API_KEY`; `ANTIGRAVITY_MODEL` default `gemini-3.5-flash`
+- OpenRouter key: keyring `secret-tool lookup service openrouter`, fallback `OPENROUTER_API_KEY`
+- Gemini API key: keyring `secret-tool lookup service gemini`, fallback `GEMINI_API_KEY`
+- `LOTTIE_NO_GEMINI=1` skips all three Google providers
 
 ## Brand Presets
 

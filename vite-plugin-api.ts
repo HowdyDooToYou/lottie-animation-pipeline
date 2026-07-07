@@ -1,6 +1,6 @@
 import { Plugin } from 'vite';
 import { generateLottie } from './src/generator/client.ts';
-import { qualityGate, refinePrompt, QUALITY_THRESHOLD, MAX_ITERATIONS } from './src/generator/quality-gate.ts';
+import { qualityGate, refinePrompt, QUALITY_THRESHOLD, MAX_ITERATIONS, summarizeAnimationPreview } from './src/generator/quality-gate.ts';
 
 /**
  * Vite plugin that adds a /api/generate endpoint for browser-based generation.
@@ -37,6 +37,8 @@ export default function generateApi(): Plugin {
           let bestAnimation: Record<string, unknown> | null = null;
           let bestScore = 0;
           let bestReport: ReturnType<typeof qualityGate> | null = null;
+          let bestProvider: string | undefined;
+          let bestModel: string | undefined;
 
           for (let i = 1; i <= MAX_ITERATIONS; i++) {
             console.log(`[api/generate] Iteration ${i}/${MAX_ITERATIONS}...`);
@@ -53,6 +55,8 @@ export default function generateApi(): Plugin {
                 bestScore = report.score;
                 bestAnimation = result.animation;
                 bestReport = report;
+                bestProvider = result.provider;
+                bestModel = result.model;
               }
 
               if (report.passed) {
@@ -65,6 +69,8 @@ export default function generateApi(): Plugin {
                   score: report.score,
                   iterations: i,
                   passed: true,
+                  report,
+                  preview: summarizeAnimationPreview(result.animation),
                 }));
                 return;
               }
@@ -79,10 +85,13 @@ export default function generateApi(): Plugin {
             res.end(JSON.stringify({
               success: true,
               animation: bestAnimation,
+              provider: bestProvider,
+              model: bestModel,
               score: bestScore,
               iterations: MAX_ITERATIONS,
               passed: false,
               report: bestReport,
+              preview: summarizeAnimationPreview(bestAnimation),
             }));
             return;
           }
@@ -91,6 +100,7 @@ export default function generateApi(): Plugin {
           res.end(JSON.stringify({
             success: false,
             error: 'No valid animation produced',
+            qualityThreshold: QUALITY_THRESHOLD,
           }));
         } catch (err) {
           console.error('[api/generate] Error:', err);

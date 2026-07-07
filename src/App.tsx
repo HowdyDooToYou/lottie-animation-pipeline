@@ -1,13 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { LottiePreview } from './components/LottiePreview.tsx';
 import { Timeline } from './components/Timeline.tsx';
 import { AnimationList } from './components/AnimationList.tsx';
 import { buildSystemPrompt, FEW_SHOT_EXAMPLES, isLottieJson, autoFixLottie } from './generator/index.ts';
+import { buildReviewCardData, type AnimationGenerationMeta } from './generator/review-card.ts';
 
 interface AnimationEntry {
   name: string;
   path: string;
   data: Record<string, unknown>;
+  generation?: AnimationGenerationMeta;
 }
 
 function App() {
@@ -25,6 +27,10 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const selected = animations.find((a) => a.name === selectedName);
+  const reviewCard = useMemo(() => {
+    if (!selected) return null;
+    return buildReviewCardData(selected);
+  }, [selected]);
 
   const handleLoadFile = useCallback((file: File) => {
     const reader = new FileReader();
@@ -74,6 +80,13 @@ function App() {
           name: `generated-${Date.now()}`,
           path: 'generated',
           data: data.animation,
+          generation: {
+            provider: data.provider,
+            model: data.model,
+            score: data.score,
+            passed: data.passed,
+            iterations: data.iterations,
+          },
         };
         setAnimations((prev) => [...prev, entry]);
         setSelectedName(entry.name);
@@ -121,12 +134,43 @@ function App() {
             />
           </div>
           {selected && (
-            <Timeline
-              currentFrame={currentFrame}
-              totalFrames={(selected.data.op as number) || 0}
-              fps={(selected.data.fr as number) || 60}
-              onSeek={() => {}}
-            />
+            <>
+              <Timeline
+                currentFrame={currentFrame}
+                totalFrames={(selected.data.op as number) || 0}
+                fps={(selected.data.fr as number) || 60}
+                onSeek={() => {}}
+              />
+              {reviewCard && (
+                <section className="review-card">
+                  <div className="review-card-header">
+                    <div>
+                      <h3>{reviewCard.title}</h3>
+                      <p>{reviewCard.sourceLabel}</p>
+                    </div>
+                    <div className="review-badges">
+                      {reviewCard.badges.map((badge) => (
+                        <span key={badge} className="review-badge">{badge}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="review-metrics">
+                    <div><span>Duration</span><strong>{reviewCard.metrics.duration}</strong></div>
+                    <div><span>Frames</span><strong>{reviewCard.metrics.frames}</strong></div>
+                    <div><span>Canvas</span><strong>{reviewCard.metrics.canvas}</strong></div>
+                    <div><span>Motion</span><strong>{reviewCard.metrics.motion}</strong></div>
+                  </div>
+                  {reviewCard.generation && (
+                    <div className="review-generation">
+                      <span><strong>Provider:</strong> {reviewCard.generation.provider || 'unknown'}</span>
+                      <span><strong>Model:</strong> {reviewCard.generation.model || 'unknown'}</span>
+                      <span><strong>Score:</strong> {reviewCard.generation.score ?? 'n/a'}</span>
+                      <span><strong>Iterations:</strong> {reviewCard.generation.iterations ?? 'n/a'}</span>
+                    </div>
+                  )}
+                </section>
+              )}
+            </>
           )}
         </main>
 
