@@ -109,7 +109,7 @@ lottie-animation-pipeline/
 │   ├── validate.ts         # Validate Lottie JSON files
 │   └── generate.ts         # CLI generation entry point
 ├── vite-plugin-api.ts      # /api/generate middleware
-└── prompts/                # Motion design prompts (WIP)
+└── LOTTIE_PIPELINE_GUIDE.md # Agent-facing pipeline docs
 ```
 
 ## Cost Model 💰
