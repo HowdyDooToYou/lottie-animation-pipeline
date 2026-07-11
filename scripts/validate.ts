@@ -12,7 +12,9 @@ import fs from 'fs';
 import path from 'path';
 import { validateOrFix } from '../src/generator/schema.ts';
 
-const dir: string = process.argv[2] || './public/animations';
+// Production validation intentionally targets only the supported export set.
+// Rejected legacy JSON remains under public/animations/rejected for provenance.
+const dir: string = process.argv[2] || './public/animations/final';
 
 function walk(d: string): string[] {
   const out: string[] = [];

@@ -73,7 +73,10 @@ Reports land in `reports/generation-<timestamp>.json`.
 npm run validate                    # Strict schema check, recursive (exits 1 on invalid)
 npm run validate -- path/to/dir     # Check specific directory
 npm run validate:render             # Headless-browser render test + screenshots
+npm run check:production            # Tests + build + strict validation + render gate
 ```
+
+The default validators inspect only `public/animations/final/`, the supported export set. Rejected legacy inputs live in `public/animations/rejected/` for provenance and are never exported.
 
 ### Export to a Project
 ```bash
