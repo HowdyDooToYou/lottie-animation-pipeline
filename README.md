@@ -73,13 +73,18 @@ Reports land in `reports/generation-<timestamp>.json`.
 npm run validate                    # Strict schema check, recursive (exits 1 on invalid)
 npm run validate -- path/to/dir     # Check specific directory
 npm run validate:render             # Headless-browser render test + screenshots
+npm run check:production            # Tests + build + strict validation + render gate
 ```
+
+The default validators inspect only `public/animations/final/`, the supported export set. Rejected legacy inputs live in `public/animations/rejected/` for provenance and are never exported.
 
 ### Export to a Project
 ```bash
 npm run export -- --to /path/to/project/public/animations
+# Default: exports the manifest-backed release set only.
+# Use --all only for library maintenance; use --only id1,id2 for a smaller release.
 ```
-Copies only strictly-valid JSON plus an `animations-manifest.json` index.
+Copies only manifest-backed, strictly-valid JSON plus an `animations-manifest.json` index.
 
 **Full agent-facing docs: [LOTTIE_PIPELINE_GUIDE.md](LOTTIE_PIPELINE_GUIDE.md)**
 
