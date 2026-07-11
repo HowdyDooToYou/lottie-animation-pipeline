@@ -11,23 +11,33 @@
 import fs from 'fs';
 import path from 'path';
 import { validateOrFix } from '../src/generator/schema.ts';
+import { selectExportFiles } from '../src/generator/export-plan.ts';
 
 const args = process.argv.slice(2);
 const toIndex = args.indexOf('--to');
 const target = toIndex >= 0 ? args[toIndex + 1] : null;
 const onlyIndex = args.indexOf('--only');
-const only = onlyIndex >= 0 ? new Set(args[onlyIndex + 1].split(',')) : null;
+const only = onlyIndex >= 0 && args[onlyIndex + 1]
+  ? new Set(args[onlyIndex + 1].split(','))
+  : null;
+const all = args.includes('--all');
 
 if (!target) {
-  console.error('Usage: npm run export -- --to <target-dir> [--only id1,id2]');
+  console.error('Usage: npm run export -- --to <target-dir> [--only id1,id2] [--all]');
   process.exit(1);
 }
 
 const SOURCE_DIR = path.join(process.cwd(), 'public/animations/final');
-
-const files = fs.readdirSync(SOURCE_DIR)
-  .filter(f => f.endsWith('.json'))
-  .filter(f => !only || only.has(f.replace(/\.json$/, '')));
+const MANIFEST_PATH = path.join(process.cwd(), 'animations/manifest.json');
+const availableFiles = fs.readdirSync(SOURCE_DIR).filter((file) => file.endsWith('.json'));
+const releaseManifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8')) as {
+  animations: Array<{ id: string }>;
+};
+const files = selectExportFiles(
+  availableFiles,
+  releaseManifest.animations.map((animation) => animation.id),
+  { all, only },
+);
 
 if (files.length === 0) {
   console.log('Nothing to export from', SOURCE_DIR);
@@ -38,7 +48,7 @@ fs.mkdirSync(target, { recursive: true });
 
 let exported = 0;
 let rejected = 0;
-const manifest: Array<{ id: string; file: string; w: number; h: number; frames: number; fr: number }> = [];
+const exportManifest: Array<{ id: string; file: string; w: number; h: number; frames: number; fr: number }> = [];
 
 for (const file of files) {
   const src = path.join(SOURCE_DIR, file);
@@ -52,7 +62,7 @@ for (const file of files) {
   }
 
   fs.copyFileSync(src, path.join(target, file));
-  manifest.push({
+  exportManifest.push({
     id: file.replace(/\.json$/, ''),
     file,
     w: result.w,
@@ -66,7 +76,7 @@ for (const file of files) {
 
 fs.writeFileSync(
   path.join(target, 'animations-manifest.json'),
-  JSON.stringify({ exported: new Date().toISOString(), animations: manifest }, null, 2),
+  JSON.stringify({ exported: new Date().toISOString(), animations: exportManifest }, null, 2),
 );
 
 console.log(`\n${exported} exported, ${rejected} rejected (invalid). Manifest: ${path.join(target, 'animations-manifest.json')}`);
