@@ -48,7 +48,14 @@ fs.mkdirSync(target, { recursive: true });
 
 let exported = 0;
 let rejected = 0;
-const exportManifest: Array<{ id: string; file: string; w: number; h: number; frames: number; fr: number }> = [];
+// Normalized width/height/fps match the ascii pipeline's manifest shape so a
+// consumer can treat both uniformly; legacy w/h/fr keys are kept for existing
+// consumers.
+const exportManifest: Array<{
+  id: string; file: string;
+  width: number; height: number; fps: number; frames: number;
+  w: number; h: number; fr: number;
+}> = [];
 
 for (const file of files) {
   const src = path.join(SOURCE_DIR, file);
@@ -65,9 +72,12 @@ for (const file of files) {
   exportManifest.push({
     id: file.replace(/\.json$/, ''),
     file,
+    width: result.w,
+    height: result.h,
+    fps: result.fr,
+    frames: result.op - result.ip,
     w: result.w,
     h: result.h,
-    frames: result.op - result.ip,
     fr: result.fr,
   });
   console.log(`📦 ${file} → ${target}`);
@@ -76,7 +86,7 @@ for (const file of files) {
 
 fs.writeFileSync(
   path.join(target, 'animations-manifest.json'),
-  JSON.stringify({ exported: new Date().toISOString(), animations: exportManifest }, null, 2),
+  JSON.stringify({ type: 'lottie', version: 1, exported: new Date().toISOString(), animations: exportManifest }, null, 2),
 );
 
 console.log(`\n${exported} exported, ${rejected} rejected (invalid). Manifest: ${path.join(target, 'animations-manifest.json')}`);
