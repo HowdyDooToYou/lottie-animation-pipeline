@@ -2,7 +2,7 @@
 
 Generate brand-compliant, validated Lottie animations from text prompts. This guide is written for Hermes / OpenClaw agents (and humans) driving the pipeline programmatically.
 
-Repo: `/home/tempest/lottie-animation-pipeline` — run all commands from here.
+Run all commands from the repo root. (See README "Fresh machine / CI setup" for env configuration on a new host.)
 
 ## TL;DR
 

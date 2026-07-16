@@ -1,9 +1,10 @@
 #!/usr/bin/env tsx
 import fs from 'node:fs';
+import path from 'node:path';
 
 import { FEW_SHOT_EXAMPLES, renderShowcaseHtml, summarizeAnimationPreview, type ShowcaseVariant } from '../src/generator/index.ts';
 
-const outputPath = process.argv[2] || '/home/tempest/lottie-variant-showcase.html';
+const outputPath = process.argv[2] || `${process.cwd()}/reports/lottie-variant-showcase.html`;
 const orbitBarsPath = `${process.cwd()}/public/animations/final/orbit-bars.json`;
 const finalDir = `${process.cwd()}/public/animations/final`;
 fs.mkdirSync(finalDir, { recursive: true });
@@ -73,5 +74,6 @@ const variants: ShowcaseVariant[] = assets.map((asset) => {
 });
 
 const html = renderShowcaseHtml('Revenue dashboard motion system — Lottie Variant Showcase', variants);
+fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, html);
 console.log(`Wrote ${outputPath}`);
