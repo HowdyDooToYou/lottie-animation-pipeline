@@ -1,7 +1,25 @@
 {
   "name": "lottie-animation-pipeline",
-  "version": "0.1.0",
-  "description": "AI-powered Lottie animation generation pipeline with zod validation and brand tokens",
+  "version": "1.0.0",
+  "description": "Production motion system for semantic, responsive, validated Lottie animations",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "author": "HowdyDooToYou",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HowdyDooToYou/lottie-animation-pipeline.git"
+  },
+  "homepage": "https://github.com/HowdyDooToYou/lottie-animation-pipeline#readme",
+  "bugs": {
+    "url": "https://github.com/HowdyDooToYou/lottie-animation-pipeline/issues"
+  },
+  "keywords": [
+    "lottie",
+    "animation",
+    "motion-design",
+    "design-system",
+    "accessibility",
+    "react"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +34,9 @@
     "gen": "tsx scripts/generate.ts",
     "showcase": "tsx scripts/showcase.ts",
     "test": "tsx --test src/**/*.test.ts",
-    "check:production": "npm run build:production-assets && npm run test && npm run build && npm run validate && npm run validate:render"
+    "check:public": "tsx scripts/check-public-readiness.ts",
+    "check:production": "npm run build:production-assets && npm run test && npm run build && npm run validate && npm run validate:render",
+    "check:release": "npm run check:public && npm run check:production"
   },
   "dependencies": {
     "lottie-react": "^2.4.0",

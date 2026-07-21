@@ -212,9 +212,8 @@ import {Player} from '@lottiefiles/react-player';
 
 ## Next Steps
 
-1. Review moreproof.dev site structure
-2. Map archetypes to site-specific needs
-3. Generate initial assets for key pages
-4. Create HTML showcase for stakeholder review
-5. Implement in production with lazy-loading
-6. Add to design system documentation
+1. Map archetypes to product-specific needs
+2. Generate initial assets for key surfaces
+3. Review the HTML showcase with stakeholders
+4. Implement in production with in-view playback and lazy-loading
+5. Add accepted patterns to the consuming design system
