@@ -60,13 +60,13 @@ Promotion to `final/` requires **strict** zod validity — auto-fixed output nev
 promotes, it is only kept as best-effort when all retries fail (`passed: false`
 in the result/report; treat those as drafts needing regeneration).
 
-Scored checks (pass ≥ 60/100): strict Lottie schema, duration 0.25–10 s,
+Scored checks (pass ≥ 85/100): strict Lottie schema, required layer start timing, duration 0.25–10 s,
 sane layer count, brand colors, animated keyframes (not static), shape layers.
 
 Two extra verification layers, run them after any batch:
 
-- `npm run validate` — strict schema over `public/animations/` (recursive); exits 1 on invalid files
-- `npm run validate:render` — loads each JSON with lottie-web in headless Chromium, checks for runtime errors + non-empty SVG, writes screenshots to `reports/screenshots/`
+- `npm run validate` — strict schema over `public/animations/final/` (recursive); exits 1 on invalid files
+- `npm run validate:render` — loads each JSON with lottie-web in headless Chromium, rasterizes representative frames, rejects non-painting or nearly-always-blank output, and writes screenshots to `reports/screenshots/`
 
 ## Manifest format (`animations/manifest.json`)
 

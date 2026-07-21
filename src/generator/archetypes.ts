@@ -49,6 +49,15 @@ export const ARCHETYPES: LottieArchetype[] = [
     features: ['growth', 'staggered-rise', 'metric-display'],
     colors: ['#408ff5', '#ffc240'],
   },
+  {
+    slug: 'signal-convergence',
+    label: 'Signal Convergence',
+    preset: 'technical',
+    intent: 'Create a structured routing panel where visible signal packets travel along persistent rails into a processing hub.',
+    motionNotes: ['Keep the routing scaffold visible throughout.', 'Stagger packets by 2-4 frames.', 'Use a restrained gold confirmation arc at the hub.'],
+    features: ['data-routing', 'persistent-scaffold', 'staggered-arrival'],
+    colors: ['#408ff5', '#40d6ab', '#ffc240'],
+  },
 
   // Micro-Interactions
   {
@@ -126,6 +135,15 @@ export const ARCHETYPES: LottieArchetype[] = [
     motionNotes: ['Animate stroke-dashoffset.', 'Smooth easing at start/end.', 'Match brand blue for stroke.'],
     features: ['stroke-animation', 'progress-tracking', 'circular'],
     colors: ['#408ff5'],
+  },
+  {
+    slug: 'milestone-bloom',
+    label: 'Milestone Bloom',
+    preset: 'premium',
+    intent: 'Create a milestone seal with a persistent track, three status dots, a gold progress sweep, and a mint check reveal.',
+    motionNotes: ['Keep the baseline ring and dots visible throughout.', 'Bound scale between 90% and 115%.', 'Return cleanly to the baseline state for looping.'],
+    features: ['completion-seal', 'trim-path', 'persistent-scaffold'],
+    colors: ['#408ff5', '#40d6ab', '#ffc240'],
   },
   {
     slug: 'skeleton-loader',

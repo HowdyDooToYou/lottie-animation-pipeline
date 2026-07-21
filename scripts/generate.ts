@@ -17,7 +17,7 @@ Usage: tsx scripts/generate.ts <name> "<prompt>" [preset]
 Quality-gated generation:
   - Generates from prompt (local Ollama → OpenRouter fallback)
   - Runs quality gate each iteration (valid JSON + brand + motion + animation)
-  - Auto-promotes to final/<name>.json when score >= 60
+  - Auto-promotes to final/<name>.json when score >= 85
   - Up to 3 iterations with refined prompts
   - Saves best result even if never reaches threshold
 

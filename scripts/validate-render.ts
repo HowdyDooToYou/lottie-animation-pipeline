@@ -14,24 +14,10 @@
 import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer-core';
-
-const CHROMIUM_CANDIDATES = [
-  process.env.CHROMIUM_BIN,
-  '/usr/bin/chromium-browser',
-  '/usr/bin/chromium',
-  '/snap/bin/chromium',
-  '/usr/bin/google-chrome',
-].filter(Boolean) as string[];
+import { findChromium, probeAnimationRender } from '../src/generator/render-validation.ts';
 
 const target = process.argv[2] || path.join(process.cwd(), 'public/animations/final');
 const SCREENSHOT_DIR = path.join(process.cwd(), 'reports/screenshots');
-
-function findChromium(): string {
-  for (const candidate of CHROMIUM_CANDIDATES) {
-    if (fs.existsSync(candidate)) return candidate;
-  }
-  throw new Error(`No Chromium found. Tried: ${CHROMIUM_CANDIDATES.join(', ')} — set CHROMIUM_BIN`);
-}
 
 function collectFiles(p: string): string[] {
   if (p.endsWith('.json')) return [p];
@@ -81,36 +67,7 @@ function collectFiles(p: string): string[] {
         );
         await page.addScriptTag({ content: lottieLib });
 
-        const result = await page.evaluate(async (data) => {
-          const lottie = (window as unknown as { lottie: any }).lottie;
-          const anim = lottie.loadAnimation({
-            container: document.getElementById('anim'),
-            renderer: 'svg',
-            loop: false,
-            autoplay: false,
-            animationData: data,
-          });
-
-          await new Promise<void>((resolve, reject) => {
-            anim.addEventListener('DOMLoaded', () => resolve());
-            anim.addEventListener('data_failed', () => reject(new Error('lottie data_failed')));
-            setTimeout(() => reject(new Error('DOMLoaded timeout (3s)')), 3000);
-          });
-
-          // Sample frames across the animation and confirm the SVG has content
-          const svg = document.querySelector('#anim svg');
-          const totalFrames = anim.totalFrames as number;
-          const samples = [0, 0.25, 0.5, 0.75, 0.99].map(f => Math.floor(f * (totalFrames - 1)));
-          for (const frame of samples) {
-            anim.goToAndStop(frame, true);
-          }
-
-          return {
-            svgPresent: !!svg,
-            svgChildCount: svg ? svg.querySelectorAll('path, rect, ellipse, circle, g').length : 0,
-            totalFrames,
-          };
-        }, animationData);
+        const result = await probeAnimationRender(page, animationData);
 
         // Screenshot at mid-animation for manual review
         await page.evaluate(() => {
@@ -127,8 +84,23 @@ function collectFiles(p: string): string[] {
         } else if (!result.svgPresent || result.svgChildCount === 0) {
           console.log(`❌ ${name} — rendered empty SVG`);
           failed++;
+        } else if (result.maxPaintedPixels === 0) {
+          console.log(
+            `❌ ${name} — SVG nodes exist but sampled frames paint zero visible pixels ` +
+            `(frames: ${result.sampledFrames.join(', ')})`,
+          );
+          failed++;
+        } else if (result.paintedSampleCount < 2) {
+          console.log(
+            `❌ ${name} — visible content appears in only ${result.paintedSampleCount}/` +
+            `${result.sampledFrames.length} sampled frames (painted px: ${result.paintedPixels.join(', ')})`,
+          );
+          failed++;
         } else {
-          console.log(`✅ ${name} — renders (${result.totalFrames} frames, ${result.svgChildCount} SVG nodes)`);
+          console.log(
+            `✅ ${name} — renders (${result.totalFrames} frames, ${result.svgChildCount} SVG nodes, ` +
+            `${result.maxPaintedPixels} max painted px)`,
+          );
           passed++;
         }
       } catch (err) {
