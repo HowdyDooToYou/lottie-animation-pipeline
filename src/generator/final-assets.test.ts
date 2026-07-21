@@ -12,7 +12,15 @@ test('every production animation is strictly schema-valid', () => {
   assert.ok(files.length > 0, 'production animation directory must not be empty');
 
   for (const file of files) {
-    const animation = JSON.parse(fs.readFileSync(path.join(finalDir, file), 'utf-8'));
+    const filePath = path.join(finalDir, file);
+    let animation: unknown;
+
+    assert.doesNotThrow(
+      () => {
+        animation = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      },
+      `${file} must contain parseable JSON before it is eligible for export`,
+    );
     assert.doesNotThrow(
       () => validateLottie(animation),
       `${file} must be strictly valid before it is eligible for export`,

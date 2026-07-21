@@ -176,7 +176,10 @@ export const LayerSchema = z.object({
   ao: z.number().optional(),
   ip: z.number(),
   op: z.number(),
-  st: z.number().optional(),
+  // lottie-web uses the layer start time while calculating visibility.
+  // Omitting it can produce a DOM full of SVG nodes whose layer groups stay
+  // `display:none`, so this is part of strict renderability, not metadata.
+  st: z.number(),
   bm: z.number().optional(),
   shapes: z.array(ShapeItem).optional(),
   tt: z.number().optional(),      // track matte type
@@ -333,6 +336,9 @@ export function autoFixLottie(input: Record<string, unknown>): Record<string, un
     if ((layer.op as number) <= (layer.ip as number)) {
       layer.op = (layer.ip as number) + (json.fr as number);
     }
+    // A missing start time makes lottie-web keep the layer hidden even though
+    // it still creates SVG nodes and emits DOMLoaded.
+    if (typeof layer.st !== 'number') layer.st = 0;
     // Ensure ks transform exists
     if (!layer.ks || typeof layer.ks !== 'object') {
       layer.ks = {

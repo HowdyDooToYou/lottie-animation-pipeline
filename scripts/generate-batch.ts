@@ -53,7 +53,7 @@ interface ReportRow {
   error?: string;
 }
 
-const PROMPT_VERSION = 1; // bump to invalidate all cache entries after prompt changes
+const PROMPT_VERSION = 2; // layer timing + production visual-quality prompt contract
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');

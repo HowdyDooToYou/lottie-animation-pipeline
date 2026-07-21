@@ -29,7 +29,9 @@ const OLLAMA_FAST_MODEL = process.env.OLLAMA_FAST_MODEL || 'qwen2.5:7b';      //
 const OLLAMA_SMART_MODEL = process.env.OLLAMA_SMART_MODEL || 'gemma3:27b';    // Slower but better quality
 
 const OPENROUTER_KEY = (() => {
-  // Pull from Linux keyring first
+  // Env first — the keyring copy can go stale (it 401'd on the ascii pipeline
+  // 2026-07-05) and doesn't exist on non-Linux/CI hosts.
+  if (process.env.OPENROUTER_API_KEY) return process.env.OPENROUTER_API_KEY;
   try {
     const { execSync } = require('child_process');
     const key = execSync('secret-tool lookup service openrouter', { encoding: 'utf-8' }).trim();
@@ -37,8 +39,7 @@ const OPENROUTER_KEY = (() => {
   } catch {
     // secret-tool not available or key not set
   }
-  // Fallback to env var
-  return process.env.OPENROUTER_API_KEY || '';
+  return '';
 })();
 const OPENROUTER_FREE_MODEL = 'qwen/qwen3-coder:free'; // Or: 'openrouter/free'
 const OPENROUTER_CHEAP_MODEL = 'deepseek/deepseek-chat-v3-0324:free'; // Cheap fallback
@@ -61,6 +62,7 @@ const GEMINI_CLI_TIMEOUT_MS = Number(process.env.GEMINI_CLI_TIMEOUT_MS) || 180_0
 const GEMINI_DISABLED = process.env.LOTTIE_NO_GEMINI === '1';
 
 const GEMINI_API_KEY = (() => {
+  if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
   try {
     const { execSync } = require('child_process');
     const key = execSync('secret-tool lookup service gemini', { encoding: 'utf-8' }).trim();
@@ -68,8 +70,12 @@ const GEMINI_API_KEY = (() => {
   } catch {
     // secret-tool not available or key not set
   }
-  return process.env.GEMINI_API_KEY || '';
+  return '';
 })();
+
+// Anthropic (paid, most capable — last resort in the cost hierarchy)
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || '';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -164,6 +170,52 @@ async function generateOpenRouter(
     return data.choices?.[0]?.message?.content || null;
   } catch (err) {
     console.error('OpenRouter error:', (err as Error).message);
+    return null;
+  }
+}
+
+async function generateAnthropic(
+  systemPrompt: string,
+  userPrompt: string,
+): Promise<string | null> {
+  if (!ANTHROPIC_KEY) {
+    console.log('Anthropic key not set (ANTHROPIC_API_KEY), skipping');
+    return null;
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 16000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+      signal: AbortSignal.timeout(180_000),
+    });
+
+    if (!res.ok) {
+      console.error(`Anthropic error: ${res.status} ${(await res.text()).slice(0, 200)}`);
+      return null;
+    }
+
+    const data = await res.json() as {
+      stop_reason?: string;
+      content?: Array<{ type: string; text?: string }>;
+    };
+    if (data.stop_reason === 'refusal') {
+      console.error('Anthropic: request refused, falling through');
+      return null;
+    }
+    return data.content?.find((b) => b.type === 'text')?.text || null;
+  } catch (err) {
+    console.error('Anthropic error:', (err as Error).message);
     return null;
   }
 }
@@ -399,6 +451,11 @@ export async function generateLottie(
       name: 'openrouter-cheap',
       model: OPENROUTER_CHEAP_MODEL,
       generate: () => generateOpenRouter(systemPrompt, userPrompt, OPENROUTER_CHEAP_MODEL),
+    },
+    {
+      name: `anthropic(${ANTHROPIC_MODEL})`,
+      model: ANTHROPIC_MODEL,
+      generate: () => generateAnthropic(systemPrompt, userPrompt),
     },
   ];
 

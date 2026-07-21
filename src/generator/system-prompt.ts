@@ -21,6 +21,7 @@ export const LOTTIE_CHEATSHEET = `
 - 0: precomp, 1: solid, 2: image, 3: null, 4: shape, 5: text
 
 ### Shape layers (ty: 4)
+- Every layer must include numeric start/stretch timing: st: 0 and sr: 1
 - ks: transform with anchor(a), position(p), scale(s), rotation(r), opacity(o)
 - Each ks property: {a: 0, k: value} for static, {a: 1, k: [{t, s, e, i, o}]} for animated
 - shapes: array of shape items
@@ -99,7 +100,7 @@ Follow these strictly — they separate Framer-tier animations from generic AI s
 4. Shape layers use ty: 4
 5. Keep animations concise (typically 1-3 seconds)
 6. Use ip=0 and op = fr * duration for total frames
-7. Every layer needs ks (transform) and ip/op (timing)
+7. Every layer needs ks (transform), ip/op (timing), st: 0 (start time), and sr: 1 (stretch)
 8. For static values: {a: 0, k: value}
 9. For animated values: {a: 1, k: [{t: frame, s: [val], e: [val]}]}
 
@@ -113,23 +114,25 @@ export const FEW_SHOT_EXAMPLES = {
     animation: {
       v: '5.7.4', fr: 60, ip: 0, op: 120, w: 512, h: 512,
       layers: [{
-        ty: 4, nm: 'Pulse Circle', ip: 0, op: 120, st: 0,
+        ddd: 0, ind: 1, ty: 4, nm: 'Pulse Circle', sr: 1, ip: 0, op: 120, st: 0, ao: 0, bm: 0,
         ks: {
-          a: { a: 0, k: [256, 256] },
+          a: { a: 0, k: [0, 0] },
           p: { a: 0, k: [256, 256] },
           s: {
             a: 1,
             k: [
-              { t: 0, s: [100, 100, 100], e: [115, 115, 115] },
-              { t: 60, s: [115, 115, 115], e: [100, 100, 100] },
+              { t: 0, s: [100, 100, 100], e: [115, 115, 115], i: { x: [0.25], y: [1] }, o: { x: [0.5], y: [1] } },
+              { t: 60, s: [115, 115, 115], e: [100, 100, 100], i: { x: [0.25], y: [1] }, o: { x: [0.5], y: [1] } },
+              { t: 120, s: [100, 100, 100] },
             ],
           },
           r: { a: 0, k: 0 },
           o: {
             a: 1,
             k: [
-              { t: 0, s: [100], e: [70] },
-              { t: 60, s: [70], e: [100] },
+              { t: 0, s: [100], e: [70], i: { x: [0.25], y: [1] }, o: { x: [0.5], y: [1] } },
+              { t: 60, s: [70], e: [100], i: { x: [0.25], y: [1] }, o: { x: [0.5], y: [1] } },
+              { t: 120, s: [100] },
             ],
           },
         },

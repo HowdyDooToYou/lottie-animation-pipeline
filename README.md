@@ -5,9 +5,35 @@ Lottie animation rendering, generation, and asset management. A reusable pipelin
 ## Quick Start
 
 ```bash
-cd /home/tempest/lottie-animation-pipeline
 npm install
 npm run dev          # Start preview + API on :3300
+```
+
+Open `http://localhost:3300/quality-review.html` for the live, pauseable review of the three production samples.
+
+## Fresh machine / CI setup
+
+The pipeline runs anywhere Node 20+ runs; the defaults just assume the original
+dev box. On a new machine or in CI, copy `.env.example` and set what you need:
+
+1. **API keys** — set `OPENROUTER_API_KEY` (and/or `GEMINI_API_KEY`) as plain
+   env vars. The Linux-keyring (`secret-tool`) lookups are optional fallbacks
+   and silently skipped where unavailable.
+2. **Skip local-only providers** — set `LOTTIE_NO_GEMINI=1` unless the `agy` /
+   `gemini` CLIs are installed and authenticated. The Ollama lanes are skipped
+   automatically when nothing listens on `OLLAMA_BASE` (default is a
+   host-specific bridge on `:21434`; stock Ollama is `:11434`).
+3. **Render validation needs a browser** — `puppeteer-core` ships no Chromium.
+   Autodetection only checks Linux paths, so set `CHROMIUM_BIN` to a
+   Chrome/Chromium executable on macOS/Windows/containers.
+
+Minimal CI profile:
+
+```bash
+export OPENROUTER_API_KEY=...    # or GEMINI_API_KEY
+export LOTTIE_NO_GEMINI=1
+export CHROMIUM_BIN=/usr/bin/chromium   # container's browser
+npm ci && npm run check:production
 ```
 
 ## Usage
@@ -21,7 +47,7 @@ Generate → Quality Gate → Auto-Promote (like proposal-operator)
 npm run gen -- hero "sliding indicator bars with blue and gold"
 
 # That's it. Final animations land in public/animations/final/ directly.
-# If the quality gate passes (score >= 60/100), it auto-promotes.
+# If the quality gate passes (score >= 85/100), it auto-promotes.
 # If not, the system retries up to 3 times with refined prompts.
 # Best result is always saved, even if it doesn't reach threshold.
 ```
@@ -33,6 +59,8 @@ npm run gen -- hero "sliding indicator bars with blue and gold"
 4. Uses brand colors from tokens
 5. Has animated keyframes (not static)
 6. Transform-based animation (no shape geometry hacks)
+7. Required layer start timing (`st`) so lottie-web cannot silently hide generated layers
+8. Chromium raster probe confirms representative frames paint visible pixels
 
 **Motion design baked into the AI prompt:**
 - Exponential easings only (ease-out-quart, ease-out-expo)

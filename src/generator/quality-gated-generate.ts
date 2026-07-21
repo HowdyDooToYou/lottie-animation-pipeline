@@ -110,6 +110,7 @@ export async function generateWithQualityGate(opts: GenerateOptions): Promise<Qu
       if (retryResult.success && retryResult.animation) {
         // Successfully retried
         const report = qualityGate(retryResult.animation);
+        const passed = report.validLottie && report.score >= qualityThreshold;
         console.log(`   ✅ Retry succeeded, score: ${report.score}/100`);
         orchestrator.recordAttempt({ score: report.score, provider: currentProvider, model: retryResult.model ?? 'unknown', iteration, timestamp: Date.now() });
 
@@ -119,7 +120,7 @@ export async function generateWithQualityGate(opts: GenerateOptions): Promise<Qu
           bestReport = report;
         }
 
-        if (report.passed) {
+        if (passed) {
           const finalPath = path.join(outputDir, `${name}.json`);
           fs.writeFileSync(finalPath, JSON.stringify(retryResult.animation, null, 2));
           console.log(`\n✅ Auto-promoted → ${finalPath} (score: ${report.score}/100)`);
@@ -153,7 +154,8 @@ export async function generateWithQualityGate(opts: GenerateOptions): Promise<Qu
 
     // Quality gate
     const report = qualityGate(result.animation!);
-    console.log(`   Score: ${report.score}/100 | ${report.passed ? '✅ PASS' : '❌ FAIL'}`);
+    const passed = report.validLottie && report.score >= qualityThreshold;
+    console.log(`   Score: ${report.score}/100 | ${passed ? '✅ PASS' : '❌ FAIL'}`);
     if (report.strengths.length) console.log(`   + ${report.strengths.join(', ')}`);
     if (report.warns.length) console.log(`   ~ ${report.warns.join(', ')}`);
     if (report.issues.length) console.log(`   ✗ ${report.issues.join(', ')}`);
@@ -169,10 +171,10 @@ export async function generateWithQualityGate(opts: GenerateOptions): Promise<Qu
     }
 
     // Notify caller
-    onIteration?.(iteration, report.score, report.passed, report, result);
+    onIteration?.(iteration, report.score, passed, report, result);
 
     // Auto-promote if passed
-    if (report.passed) {
+    if (passed) {
       const finalPath = path.join(outputDir, `${name}.json`);
       fs.writeFileSync(finalPath, JSON.stringify(result.animation!, null, 2));
       console.log(`\n✅ Auto-promoted → ${finalPath} (score: ${report.score}/100)`);

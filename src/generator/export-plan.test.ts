@@ -28,6 +28,9 @@ test('default export releases only manifest-backed assets', () => {
       'progress-ring-01.json',
       'waveform-bars-01.json',
       'gradient-flow-01.json',
+      'sample-executive-orbit-01.json',
+      'sample-signal-convergence-01.json',
+      'sample-milestone-bloom-01.json',
     ],
   );
 });

@@ -29,7 +29,7 @@ export interface AnimationPreviewSummary {
 // Impeccable motion design thresholds
 const MIN_FRAMES = 15;                     // Too short = broken feeling
 const MAX_FRAMES = 600;                    // Too long = bloated
-export const QUALITY_THRESHOLD = 60;       // Minimum score to auto-promote
+export const QUALITY_THRESHOLD = 85;       // Production promotion floor
 export const MAX_ITERATIONS = 3;
 
 /**
@@ -267,7 +267,7 @@ export function refinePrompt(
       refinements.push('Include at least 2 visible shape layers.');
     }
     if (issue.includes('Schema validation failed')) {
-      refinements.push('Return strict Bodymovin/Lottie JSON only with numeric layer ty values and valid ks transform objects.');
+      refinements.push('Return strict Bodymovin/Lottie JSON only with numeric layer ty values, st: 0, sr: 1, and valid ks transform objects on every layer.');
     }
     if (issue.includes('missing its tr')) {
       refinements.push("Every shape group (ty: 'gr') must include a transform item (ty: 'tr' with p, a, s, r, o) as the last element of its it array.");

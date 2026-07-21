@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated": "2026-07-06",
+  "generated": "2026-07-21",
   "animations": [
     {
       "id": "hero-orbit-01",
@@ -71,6 +71,27 @@
       "name": "Transition Backdrop",
       "params": { "width": 600, "height": 200, "color": "#408ff5", "duration": 150 },
       "usage": "transitions / background motion"
+    },
+    {
+      "id": "sample-executive-orbit-01",
+      "archetype": "hero-orbit",
+      "name": "Executive Intelligence Orbit",
+      "params": { "width": 400, "height": 400, "color": "#40d6ab", "duration": 120 },
+      "usage": "premium orchestration / intelligence state"
+    },
+    {
+      "id": "sample-signal-convergence-01",
+      "archetype": "signal-convergence",
+      "name": "Data Routing Panel",
+      "params": { "width": 480, "height": 320, "color": "#408ff5", "duration": 120 },
+      "usage": "data routing / processing state"
+    },
+    {
+      "id": "sample-milestone-bloom-01",
+      "archetype": "milestone-bloom",
+      "name": "Milestone Completion Seal",
+      "params": { "width": 360, "height": 360, "color": "#ffc240", "duration": 96 },
+      "usage": "milestone / completion confirmation"
     }
   ]
 }

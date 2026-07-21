@@ -13,6 +13,7 @@ const baseAnimation = (kso: unknown) => ({
   layers: [
     {
       ty: 4,
+      st: 0,
       ks: { o: kso, p: { a: 0, k: [200, 200] }, s: { a: 0, k: [100, 100] } },
       ip: 0,
       op: 60,
@@ -55,6 +56,7 @@ test('groups without tr are rejected strictly and repaired by autofix', () => {
     v: '5.7.4', fr: 60, ip: 0, op: 60, w: 400, h: 400,
     layers: [{
       ty: 4,
+      st: 0,
       ks: { o: { a: 0, k: 100 } },
       ip: 0, op: 60,
       shapes: [{
@@ -74,6 +76,17 @@ test('groups without tr are rejected strictly and repaired by autofix', () => {
   assert.doesNotThrow(() => validateLottie(fixed));
   const it = ((fixed.layers as any[])[0].shapes[0].it as any[]);
   assert.equal(it[it.length - 1].ty, 'tr');
+});
+
+test('missing layer start time is rejected strictly and repaired by autofix', () => {
+  const anim = baseAnimation({ a: 0, k: 100 });
+  delete (anim.layers[0] as { st?: number }).st;
+
+  assert.throws(() => validateLottie(anim), /st/);
+
+  const fixed = autoFixLottie(anim as Record<string, unknown>);
+  assert.doesNotThrow(() => validateLottie(fixed));
+  assert.equal((fixed.layers as Array<{ st: number }>)[0].st, 0);
 });
 
 test('autoFixLottie repairs animated-flag mismatches so strict parse passes', () => {
