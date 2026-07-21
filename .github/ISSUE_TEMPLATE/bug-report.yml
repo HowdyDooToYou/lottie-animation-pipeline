@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible pipeline, validation, rendering, or runtime defect.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest safe reproduction. Never include credentials or proprietary assets.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, browser/Chromium version, operating system, and relevant provider lane.
+    validations:
+      required: true

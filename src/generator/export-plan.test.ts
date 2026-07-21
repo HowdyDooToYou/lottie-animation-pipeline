@@ -18,6 +18,8 @@ test('default export releases only manifest-backed assets', () => {
   assert.deepEqual(
     files,
     [
+      'attribution-flow-01.json',
+      'attribution-flow-mobile-01.json',
       'hero-orbit-01.json',
       'hero-orbit-card.json',
       'pulse-ring-01.json',

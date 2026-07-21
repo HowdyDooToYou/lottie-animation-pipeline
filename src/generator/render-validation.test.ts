@@ -45,6 +45,9 @@ test('render probe rejects node-filled SVGs that paint no visible pixels', async
     assert.ok(visible.svgChildCount > 0);
     assert.ok(visible.maxPaintedPixels > 0);
     assert.equal(visible.paintedSampleCount, visible.sampledFrames.length);
+    assert.equal(visible.sampledFrames.length, 9);
+    assert.equal(visible.meaningfulMotionSampleCount, 0, 'static fixture should not report false motion');
+    assert.equal(visible.loopSeamChangedPixels, 0);
 
     const missingStartTime = structuredClone(visibleAnimation);
     delete (missingStartTime.layers[0] as { st?: number }).st;

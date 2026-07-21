@@ -18,3 +18,11 @@ test('buildArchetypePrompt layers archetype intent on top of a base theme', () =
   assert.match(prompt, /stacked indicator bars/i);
   assert.match(prompt, /electric blue/i);
 });
+
+test('production archetypes carry explicit runtime and accessibility contracts', () => {
+  const attribution = ARCHETYPES.find((archetype) => archetype.slug === 'attribution-flow');
+  assert.ok(attribution?.motionSpec);
+  assert.equal(attribution.motionSpec.trigger, 'in-view');
+  assert.equal(attribution.motionSpec.responsiveVariants.length, 2);
+  assert.doesNotMatch(buildArchetypePrompt(attribution, 'buyer evidence'), /bounce|elastic/i);
+});

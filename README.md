@@ -1,6 +1,13 @@
-# Lottie Animation Pipeline 🎬
+# Lottie Animation Pipeline
 
-Lottie animation rendering, generation, and asset management. A reusable pipeline for any project needing Lottie animations.
+[![Production validation](https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue)](LICENSE.md)
+
+Production motion infrastructure for semantic, responsive, accessible, and verifiably renderable Lottie animations.
+
+> **Source available:** noncommercial use is permitted under the [PolyForm Noncommercial License 1.0.0](LICENSE.md). Commercial production, client delivery, product embedding, hosted generation, and redistribution require a [paid commercial license](COMMERCIAL-LICENSING.md).
+
+The pipeline combines deterministic production builders, model-assisted generation, reusable motion contracts, responsive composition, reduced-motion delivery, and browser-level promotion gates. It is built for teams that need animation assets they can defend in production—not merely JSON that happens to parse.
 
 ## Quick Start
 
@@ -9,7 +16,15 @@ npm install
 npm run dev          # Start preview + API on :3300
 ```
 
-Open `http://localhost:3300/quality-review.html` for the live, pauseable review of the three production samples.
+Open `http://localhost:3300/quality-review.html` for a live, pauseable production review.
+
+For the production motion contract, responsive attribution-flow assets, and promotion model, see [docs/production-motion-system.md](docs/production-motion-system.md).
+
+## Commercial use
+
+Launch plans begin at **$249/year for individual commercial creators**, **$999/year for studios**, and **$4,800/year for product/OEM use**. Paying customers can receive production-use rights and commercial rights to generated animation assets; embedding or offering the pipeline itself requires an explicit Product/OEM grant.
+
+[Review plans and request a license →](COMMERCIAL-LICENSING.md)
 
 ## Fresh machine / CI setup
 
@@ -62,11 +77,14 @@ npm run gen -- hero "sliding indicator bars with blue and gold"
 7. Required layer start timing (`st`) so lottie-web cannot silently hide generated layers
 8. Chromium raster probe confirms representative frames paint visible pixels
 
+High-value production assets add a second gate for semantic layer mapping, responsive companion variants, reduced-motion poster integrity, animated-channel budgets, meaningful motion across nine raster samples, and loop-seam continuity.
+
 **Motion design baked into the AI prompt:**
-- Exponential easings only (ease-out-quart, ease-out-expo)
+- Exponential easings for transitions (ease-out-quart, ease-out-expo)
 - Stagger between layers (2–4 frames)
-- Transforms + opacity only (Impeccable rule)
+- Transforms + opacity by default; trim paths only for progress/dataflow semantics
 - No bounce/elastic — that's AI slop
+- Linear easing only for declared constant-velocity transport, orbit, marquee, or spinner channels
 
 **Files in `public/animations/final/` are confirmed assets.**
 Never delete without asking the user.
@@ -93,6 +111,7 @@ npm run generate:batch                        # all of animations/manifest.json 
 npm run generate:batch -- --id pulse-ring-01  # one animation by id
 npm run generate:batch -- --force             # ignore cache
 npm run generate:batch -- --dry-run           # preview prompts only
+npm run build:production-assets               # deterministic responsive flagship pair
 ```
 Reports land in `reports/generation-<timestamp>.json`.
 
@@ -102,6 +121,8 @@ npm run validate                    # Strict schema check, recursive (exits 1 on
 npm run validate -- path/to/dir     # Check specific directory
 npm run validate:render             # Headless-browser render test + screenshots
 npm run check:production            # Tests + build + strict validation + render gate
+npm run check:public                # Licensing, secret, path, and dependency-license checks
+npm run check:release               # Complete public production release gate
 ```
 
 The default validators inspect only `public/animations/final/`, the supported export set. Rejected legacy inputs live in `public/animations/rejected/` for provenance and are never exported.
@@ -145,23 +166,24 @@ lottie-animation-pipeline/
 └── LOTTIE_PIPELINE_GUIDE.md # Agent-facing pipeline docs
 ```
 
-## Cost Model 💰
+## Generation runtime cost
 
-| Provider | Cost | Model | Speed | Use When |
-|----------|------|-------|-------|----------|
-| **Antigravity CLI** | **$0** | `gemini-3.5-flash` | ~10s | Default — Google AI Pro sub quota via `agy -p` |
-| Gemini API | $0 | `gemini-3.5-flash` | ~5s | Separate AI Studio key quota bucket |
-| Gemini CLI (legacy) | $0 | `gemini-3.5-flash` | fast-fail | Sunset for AI Pro accounts 2026-06-18 |
-| Local Ollama (fast) | $0 | `qwen2.5:7b` | ~30s | Cloud quota exhausted |
-| Local Ollama (smart) | $0 | `gemma3:27b` | ~90s | Complex animations with many layers |
-| OpenRouter free | $0 | `qwen3-coder:free` | ~5s | Fallback when Ollama is busy/offline |
-| OpenRouter cheap | ~$0.01 | `deepseek-chat` | ~3s | Last resort cloud fallback |
+Provider and infrastructure costs below are operational estimates only. They do not include the commercial license required for business use of this software.
 
-**Typical cost: $0.00 per generation.** Gemini quota buckets first, then local Ollama, cloud paid last.
+| Provider lane | Billing owner | Use when |
+|---|---|---|
+| Deterministic builders | None | Production-critical supported patterns |
+| Local OpenAI-compatible endpoint | Operator | Private/local model generation |
+| Gemini API | Operator's Google account | Model-assisted generation with an explicit API key |
+| OpenRouter | Operator's OpenRouter account | Hosted multi-model fallback |
+| Anthropic | Operator's Anthropic account | Explicitly configured high-capability fallback |
+| Optional local CLIs | Operator | A supported CLI is installed and authenticated locally |
+
+Deterministic production builders require no model call. Model-provider terms, quotas, supported model IDs, and pricing remain the operator's responsibility and can change independently of this project.
 
 ### Configuration (environment variables)
 
-- Antigravity: `agy` OAuth session (run `agy` interactively once) or `ANTIGRAVITY_API_KEY`; `ANTIGRAVITY_MODEL` default `gemini-3.5-flash`
+- Optional Antigravity-compatible CLI: configure `AGY_BIN`, authentication, and `ANTIGRAVITY_MODEL` for your installation
 - OpenRouter key: keyring `secret-tool lookup service openrouter`, fallback `OPENROUTER_API_KEY`
 - Gemini API key: keyring `secret-tool lookup service gemini`, fallback `GEMINI_API_KEY`
 - `LOTTIE_NO_GEMINI=1` skips all three Google providers
@@ -171,7 +193,7 @@ lottie-animation-pipeline/
 | Preset | Duration | Style | Use Case |
 |--------|----------|-------|----------|
 | **premium** | 1.2s | Smooth, confident | Executive polish, page transitions |
-| **energetic** | 0.6s | Snappy, bouncy | CTAs, notifications |
+| **energetic** | 0.6s | Snappy, expressive | CTAs, notifications |
 | **subtle** | 2.0s | Gentle, ambient | Loading states, idle animations |
 | **technical** | 1.5s | Precise, data-forward | Dashboards, metrics, charts |
 
@@ -202,3 +224,7 @@ charcoal: #333844 → [0.20, 0.22, 0.27, 1]
 - [OmniLottie](https://github.com/openvglab/omnilottie) — CVPR 2026 VLM-based generator
 - [LottieGPT](https://github.com/yisuanwang/LottieGPT) — CVPR 2026 + 660K dataset
 - [lottie-react](https://www.npmjs.com/package/lottie-react) — React renderer
+
+## License
+
+Copyright 2026 HowdyDooToYou. Noncommercial use is available under [PolyForm Noncommercial 1.0.0](LICENSE.md). See [commercial licensing](COMMERCIAL-LICENSING.md) for business, client, hosted, embedded, OEM, or redistribution rights. Third-party components remain under their respective licenses as listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

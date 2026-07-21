@@ -1,11 +1,6 @@
 /**
  * Lottie generation client with multi-provider fallback.
- * Cost hierarchy:
- *   Gemini CLI (Google AI Pro OAuth quota, $0)
- *   → Gemini API (AI Studio key, separate quota bucket, $0 on free tier)
- *   → Local Ollama (free)
- *   → OpenRouter free tier
- *   → OpenRouter cheap paid
+ * Provider hierarchy. Operators own provider authentication, terms, and cost.
  */
 
 import { buildSystemPrompt } from './system-prompt.ts';
@@ -20,17 +15,14 @@ const getNodeFs = async () => {
 
 // ── Provider configs ─────────────────────────────────────────────────────
 
-// :21434 is intentional — NOT a typo for Ollama's standard :11434. On this
-// WSL2 host the native ollama is masked; a node bridge on :21434 forwards to
-// the Windows-side GPU ollama (see memory: reference_ollama_gpu_routing).
-// Override with OLLAMA_BASE on hosts with a standard local install.
+// The historical default uses a local OpenAI-compatible bridge on :21434.
+// Override OLLAMA_BASE for stock Ollama (:11434) or another compatible host.
 const OLLAMA_BASE = process.env.OLLAMA_BASE || 'http://127.0.0.1:21434/v1';
 const OLLAMA_FAST_MODEL = process.env.OLLAMA_FAST_MODEL || 'qwen2.5:7b';      // Fast, schema-following
 const OLLAMA_SMART_MODEL = process.env.OLLAMA_SMART_MODEL || 'gemma3:27b';    // Slower but better quality
 
 const OPENROUTER_KEY = (() => {
-  // Env first — the keyring copy can go stale (it 401'd on the ascii pipeline
-  // 2026-07-05) and doesn't exist on non-Linux/CI hosts.
+  // Environment first; the Linux keyring remains an optional local fallback.
   if (process.env.OPENROUTER_API_KEY) return process.env.OPENROUTER_API_KEY;
   try {
     const { execSync } = require('child_process');
@@ -44,19 +36,17 @@ const OPENROUTER_KEY = (() => {
 const OPENROUTER_FREE_MODEL = 'qwen/qwen3-coder:free'; // Or: 'openrouter/free'
 const OPENROUTER_CHEAP_MODEL = 'deepseek/deepseek-chat-v3-0324:free'; // Cheap fallback
 
-// Antigravity CLI (agy): the official channel for Google AI Pro subscription
-// quota since Gemini CLI sunset for Pro/Ultra users (2026-06-18). Headless
-// via `agy -p`. Auth: browser OAuth cached in libsecret, or ANTIGRAVITY_API_KEY.
+// Optional Antigravity-compatible CLI. The operator owns installation,
+// authentication, model selection, and compliance with provider terms.
+const USER_HOME = process.env.HOME || process.env.USERPROFILE;
 const AGY_BIN = process.env.AGY_BIN
-  || `${process.env.HOME || '/home/tempest'}/.local/bin/agy`;
+  || (USER_HOME ? `${USER_HOME}/.local/bin/agy` : 'agy');
 const ANTIGRAVITY_MODEL = process.env.ANTIGRAVITY_MODEL || 'Gemini 3.5 Flash (Medium)';
 const AGY_TIMEOUT_MS = Number(process.env.AGY_TIMEOUT_MS) || 180_000;
 
-// Gemini (legacy buckets, kept as fallbacks):
-//   1. gemini CLI OAuth — sunset for AI Pro accounts; fails fast if unusable.
-//   2. Direct API with an AI Studio key — separate per-model free-tier quota.
+// Gemini-compatible CLI and direct API are optional operator-configured lanes.
 const GEMINI_CLI_BIN = process.env.GEMINI_CLI_BIN
-  || `${process.env.HOME || '/home/tempest'}/.local/bin/gemini`;
+  || (USER_HOME ? `${USER_HOME}/.local/bin/gemini` : 'gemini');
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 const GEMINI_CLI_TIMEOUT_MS = Number(process.env.GEMINI_CLI_TIMEOUT_MS) || 180_000;
 const GEMINI_DISABLED = process.env.LOTTIE_NO_GEMINI === '1';
@@ -302,7 +292,7 @@ function cliPrompt(systemPrompt: string, userPrompt: string): string {
   return `${systemPrompt}\n\n---\n\n${userPrompt}\n\nRespond with the raw Lottie JSON only. No markdown, no commentary, no tool calls.`;
 }
 
-// ── Provider: Antigravity CLI (Google AI Pro subscription quota) ─────────
+// ── Provider: optional Antigravity-compatible CLI ───────────────────────
 
 export async function generateAntigravityCli(
   systemPrompt: string,
@@ -411,9 +401,8 @@ export async function generateLottie(
 ): Promise<GenerationResult> {
   const systemPrompt = buildSystemPrompt(motionPreset);
 
-  // Provider chain: Google quota buckets first (Antigravity CLI = AI Pro sub,
-  // Gemini API = AI Studio key, legacy gemini CLI last of the three),
-  // then local Ollama, then OpenRouter fallbacks
+  // Provider chain: optional CLIs and APIs, local inference, then hosted
+  // fallbacks. Operators own provider configuration, terms, and cost.
   const providers: ProviderConfig[] = [
     ...(GEMINI_DISABLED ? [] : [
       {

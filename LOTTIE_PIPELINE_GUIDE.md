@@ -1,6 +1,6 @@
 # Lottie Pipeline Guide (for Agents)
 
-Generate brand-compliant, validated Lottie animations from text prompts. This guide is written for Hermes / OpenClaw agents (and humans) driving the pipeline programmatically.
+Generate brand-compliant, validated Lottie animations from text prompts. This guide is written for automated agents and humans driving the pipeline programmatically.
 
 Run all commands from the repo root. (See README "Fresh machine / CI setup" for env configuration on a new host.)
 
@@ -29,25 +29,26 @@ Outputs land in `public/animations/final/<id>.json`. Every batch run writes a ma
 ## How generation works
 
 ```
-prompt → provider chain → JSON extraction → auto-fix → quality gate (score ≥ 60)
+prompt → provider chain → JSON extraction → auto-fix → quality gate (score ≥ 85)
        ↺ up to 3 refined retries                    → promote to final/
 ```
 
 Provider chain, tried in order (first success wins):
 
-| # | Provider | Cost | Quota bucket |
-|---|----------|------|--------------|
-| 1 | `antigravity-cli` (`agy -p`, default `Gemini 3.5 Flash (Medium)`) | $0 | **Google AI Pro sub** (official channel since Gemini CLI sunset 2026-06-18) |
-| 2 | `gemini-api` | $0 free tier | AI Studio API key (separate bucket) |
-| 3 | `gemini-cli` | $0 | legacy — sunset for AI Pro accounts, fails fast |
-| 4 | `ollama-fast` qwen2.5:7b | $0 | local (node bridge :21434) |
-| 5 | `ollama-smart` gemma3:27b | $0 | local |
-| 6 | `openrouter-free` | $0 | OpenRouter free tier |
-| 7 | `openrouter-cheap` | ~$0.01 | OpenRouter paid |
+| # | Provider lane | Requirement |
+|---|---|---|
+| 1 | `antigravity-cli` | Optional compatible CLI installed and authenticated by the operator |
+| 2 | `gemini-api` | Operator-supplied Google AI Studio key and supported model ID |
+| 3 | `gemini-cli` | Optional legacy CLI installation |
+| 4 | `ollama-fast` | Reachable local OpenAI-compatible endpoint |
+| 5 | `ollama-smart` | Reachable local OpenAI-compatible endpoint |
+| 6 | `openrouter-free` | Operator-supplied OpenRouter key and available model |
+| 7 | `openrouter-cheap` | Operator-supplied OpenRouter key and available model |
+| 8 | `anthropic` | Operator-supplied Anthropic key and supported model ID |
 
 Environment knobs:
 
-- `ANTIGRAVITY_MODEL` — agy model, display-name form from `agy models` (default `Gemini 3.5 Flash (Medium)`); `AGY_BIN`, `AGY_TIMEOUT_MS`
+- `ANTIGRAVITY_MODEL` — model identifier accepted by the configured CLI; `AGY_BIN`, `AGY_TIMEOUT_MS`
 - `ANTIGRAVITY_API_KEY` — alternative to agy browser OAuth (agy reads it natively)
 - `GEMINI_MODEL` — legacy gemini providers' model (default `gemini-3.5-flash`)
 - `GEMINI_API_KEY` — or keyring: `secret-tool store --label gemini service gemini`
@@ -85,7 +86,7 @@ Two extra verification layers, run them after any batch:
 }
 ```
 
-- `archetype` must match a slug in `src/generator/archetypes.ts` (19 available: `pulse-ring`, `hero-orbit`, `indicator-bars`, `metric-rise`, `spinning-dots`, `check-mark`, `progress-ring`, `waveform-bars`, `gradient-flow`, `error-shake`, `button-pulse`, `sparkle-field`, `skeleton-loader`, `notification-bell`, `share-arrows`, `user-presence`, `price-ticker`, `cart-add`, `rating-stars`)
+- `archetype` must match a slug in `src/generator/archetypes.ts`; use that source as the authoritative catalog because production archetypes evolve with the motion contract.
 - `params` are folded into the prompt as hard constraints (canvas size, color, frame count)
 - Caching: params are hashed; rerunning the batch skips unchanged entries. `--force` regenerates, `--dry-run` previews prompts without generating.
 
@@ -122,7 +123,7 @@ Copies only strictly-valid JSON and writes `animations-manifest.json`
 
 ## Rules for agents
 
-1. **Never delete files in `public/animations/final/`** — they are confirmed assets; ask John.
+1. **Never delete files in `public/animations/final/` casually** — they are confirmed release assets; obtain maintainer approval.
 2. Always run `npm run validate` (and ideally `validate:render`) after generating, before exporting.
 3. Prefer `generate:batch` with a manifest entry over ad-hoc `gen` — it's cached, reported, and reproducible.
-4. One generation costs $0 on the normal path. Do not hammer retries; the orchestrator already retries with refined prompts.
+4. Deterministic builders do not call a model. All model-provider terms, quotas, and charges remain the operator's responsibility, and commercial product licensing still applies. Do not hammer retries; the orchestrator already retries with refined prompts.

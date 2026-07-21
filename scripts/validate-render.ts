@@ -15,6 +15,8 @@ import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer-core';
 import { findChromium, probeAnimationRender } from '../src/generator/render-validation.ts';
+import { ATTRIBUTION_FLOW_MOTION_SPEC } from '../src/generator/archetypes.ts';
+import { evaluateProductionRenderProbe, productionQualityGate } from '../src/generator/production-quality.ts';
 
 const target = process.argv[2] || path.join(process.cwd(), 'public/animations/final');
 const SCREENSHOT_DIR = path.join(process.cwd(), 'reports/screenshots');
@@ -68,12 +70,21 @@ function collectFiles(p: string): string[] {
         await page.addScriptTag({ content: lottieLib });
 
         const result = await probeAnimationRender(page, animationData);
+        const productionMetadata = animationData?.meta?.production as { variant?: string; posterFrame?: number } | undefined;
+        const productionReport = productionMetadata?.variant === 'desktop' || productionMetadata?.variant === 'mobile'
+          ? productionQualityGate(animationData, ATTRIBUTION_FLOW_MOTION_SPEC, productionMetadata.variant)
+          : null;
+        const productionRender = productionReport
+          ? evaluateProductionRenderProbe(result, ATTRIBUTION_FLOW_MOTION_SPEC)
+          : null;
 
         // Screenshot at mid-animation for manual review
         await page.evaluate(() => {
           const lottie = (window as unknown as { lottie: any }).lottie;
           const anim = lottie.getRegisteredAnimations()[0];
-          anim.goToAndStop(Math.floor(anim.totalFrames / 2), true);
+          const data = (anim.animationData as { meta?: { production?: { posterFrame?: number } } });
+          const posterFrame = data.meta?.production?.posterFrame ?? 0.5;
+          anim.goToAndStop(Math.floor(anim.totalFrames * posterFrame), true);
         });
         const el = await page.$('#anim');
         await el?.screenshot({ path: path.join(SCREENSHOT_DIR, `${name}.png`) as `${string}.png` });
@@ -96,10 +107,16 @@ function collectFiles(p: string): string[] {
             `${result.sampledFrames.length} sampled frames (painted px: ${result.paintedPixels.join(', ')})`,
           );
           failed++;
+        } else if (productionReport && (!productionReport.passed || !productionRender?.passed)) {
+          console.log(
+            `❌ ${name} — production gate failed: ${[...productionReport.issues, ...(productionRender?.issues ?? [])].join(' | ')}`,
+          );
+          failed++;
         } else {
           console.log(
             `✅ ${name} — renders (${result.totalFrames} frames, ${result.svgChildCount} SVG nodes, ` +
-            `${result.maxPaintedPixels} max painted px)`,
+            `${result.maxPaintedPixels} max painted px, ${result.meaningfulMotionSampleCount} motion samples` +
+            `${productionReport ? `, production ${productionReport.score}/100` : ''})`,
           );
           passed++;
         }

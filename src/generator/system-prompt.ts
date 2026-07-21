@@ -82,11 +82,14 @@ ${LOTTIE_CHEATSHEET}
 Follow these strictly — they separate Framer-tier animations from generic AI slop:
 
 - **Timing**: 100–150ms = instant feedback, 200–500ms = transitions, 500–1000ms = layout shifts
-- **Easing only**: Use exponential easings — ease-out-quart (0.25,1,0.5,1), ease-out-expo (0.19,1,0.22,1). NEVER use bounce, elastic, or linear (except for spinners).
+- **Easing**: Use exponential easings — ease-out-quart (0.25,1,0.5,1), ease-out-expo (0.19,1,0.22,1). NEVER use bounce or elastic. Linear easing is reserved for semantic constant-velocity transport, orbit, marquee, or spinner channels.
 - **Exits faster than enters**: If entrance is 12 frames, exit should be ~8 frames.
-- **Transforms & opacity only**: Animate position(p), scale(s), rotation(r), opacity(o) in ks. Never shape geometry directly for motion.
+- **Animation channels**: Prefer position(p), scale(s), rotation(r), and opacity(o) in ks. Trim paths and stroke dash animation are allowed only when they communicate progress or dataflow; do not morph arbitrary shape geometry.
 - **Stagger**: Multiple elements should animate in sequence (stagger by 2-4 frames each), not all at once.
 - **Minimal**: 2–6 layers with clear intent beats 15 layers of noise.
+- **Semantic scaffold**: Keep sources, connectors, hubs, and outcomes visible when motion is carrying information. Never make the viewer reconstruct the system between frames.
+- **Responsive topology**: For production hero/dataflow work, define separate horizontal and vertical compositions instead of shrinking one canvas.
+- **Accessible runtime**: Declare an in-view or interaction trigger, pause continuous motion when hidden, and provide a meaningful reduced-motion poster or simplified variant.
 
 ### Easing in Lottie keyframes
 - Ease-out: in tangent = {x:[0.25], y:[1]}, out tangent = {x:[0.5], y:[1]} on the KEYFRAME
@@ -103,6 +106,8 @@ Follow these strictly — they separate Framer-tier animations from generic AI s
 7. Every layer needs ks (transform), ip/op (timing), st: 0 (start time), and sr: 1 (stretch)
 8. For static values: {a: 0, k: value}
 9. For animated values: {a: 1, k: [{t: frame, s: [val], e: [val]}]}
+10. Use semantic layer names that identify source, connector, packet, hub, outcome, and confirmation roles where applicable
+11. A production animation must remain understandable at its declared reduced-motion poster frame
 
 Call render_lottie with the complete JSON that plays standalone.`;
 }
