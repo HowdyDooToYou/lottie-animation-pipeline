@@ -11,6 +11,8 @@ npm run dev          # Start preview + API on :3300
 
 Open `http://localhost:3300/quality-review.html` for the live, pauseable review of the three production samples.
 
+For the production motion contract, responsive attribution-flow assets, and promotion model, see [docs/production-motion-system.md](docs/production-motion-system.md).
+
 ## Fresh machine / CI setup
 
 The pipeline runs anywhere Node 20+ runs; the defaults just assume the original
@@ -62,11 +64,14 @@ npm run gen -- hero "sliding indicator bars with blue and gold"
 7. Required layer start timing (`st`) so lottie-web cannot silently hide generated layers
 8. Chromium raster probe confirms representative frames paint visible pixels
 
+High-value production assets add a second gate for semantic layer mapping, responsive companion variants, reduced-motion poster integrity, animated-channel budgets, meaningful motion across nine raster samples, and loop-seam continuity.
+
 **Motion design baked into the AI prompt:**
-- Exponential easings only (ease-out-quart, ease-out-expo)
+- Exponential easings for transitions (ease-out-quart, ease-out-expo)
 - Stagger between layers (2–4 frames)
-- Transforms + opacity only (Impeccable rule)
+- Transforms + opacity by default; trim paths only for progress/dataflow semantics
 - No bounce/elastic — that's AI slop
+- Linear easing only for declared constant-velocity transport, orbit, marquee, or spinner channels
 
 **Files in `public/animations/final/` are confirmed assets.**
 Never delete without asking the user.
@@ -93,6 +98,7 @@ npm run generate:batch                        # all of animations/manifest.json 
 npm run generate:batch -- --id pulse-ring-01  # one animation by id
 npm run generate:batch -- --force             # ignore cache
 npm run generate:batch -- --dry-run           # preview prompts only
+npm run build:production-assets               # deterministic responsive flagship pair
 ```
 Reports land in `reports/generation-<timestamp>.json`.
 
@@ -171,7 +177,7 @@ lottie-animation-pipeline/
 | Preset | Duration | Style | Use Case |
 |--------|----------|-------|----------|
 | **premium** | 1.2s | Smooth, confident | Executive polish, page transitions |
-| **energetic** | 0.6s | Snappy, bouncy | CTAs, notifications |
+| **energetic** | 0.6s | Snappy, expressive | CTAs, notifications |
 | **subtle** | 2.0s | Gentle, ambient | Loading states, idle animations |
 | **technical** | 1.5s | Precise, data-forward | Dashboards, metrics, charts |
 

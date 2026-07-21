@@ -18,6 +18,10 @@ import path from 'path';
 import crypto from 'crypto';
 import { generateWithQualityGate } from '../src/generator/quality-gated-generate.ts';
 import { ARCHETYPES, buildArchetypePrompt, type LottieArchetype } from '../src/generator/archetypes.ts';
+import { ATTRIBUTION_FLOW_MOTION_SPEC } from '../src/generator/archetypes.ts';
+import { buildAttributionFlowAnimation, type AttributionFlowVariant } from '../src/generator/attribution-flow.ts';
+import { productionQualityGate } from '../src/generator/production-quality.ts';
+import { validateLottie } from '../src/generator/schema.ts';
 
 interface ManifestEntry {
   id: string;
@@ -25,6 +29,8 @@ interface ManifestEntry {
   name: string;
   params?: { width?: number; height?: number; color?: string; duration?: number };
   usage?: string;
+  source?: 'model' | 'deterministic';
+  variant?: AttributionFlowVariant;
 }
 
 interface Manifest {
@@ -53,7 +59,7 @@ interface ReportRow {
   error?: string;
 }
 
-const PROMPT_VERSION = 2; // layer timing + production visual-quality prompt contract
+const PROMPT_VERSION = 3; // semantic motion contract + responsive production delivery
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');
@@ -82,7 +88,7 @@ function saveCache(cache: Record<string, CacheEntry>): void {
 
 function entryHash(entry: ManifestEntry): string {
   return crypto.createHash('sha256')
-    .update(JSON.stringify({ archetype: entry.archetype, params: entry.params ?? {}, v: PROMPT_VERSION }))
+    .update(JSON.stringify({ archetype: entry.archetype, params: entry.params ?? {}, source: entry.source ?? 'model', variant: entry.variant, motionSpec: ARCHETYPES.find((item) => item.slug === entry.archetype)?.motionSpec, v: PROMPT_VERSION }))
     .digest('hex')
     .slice(0, 16);
 }
@@ -142,6 +148,29 @@ function buildPrompt(entry: ManifestEntry, archetype: LottieArchetype): string {
     }
 
     const t0 = Date.now();
+    if (entry.source === 'deterministic') {
+      if (!entry.variant) {
+        console.error(`❌ ${entry.id}: deterministic attribution flow requires a variant`);
+        rows.push({ id: entry.id, archetype: entry.archetype, file: null, status: 'failed', error: 'missing deterministic variant' });
+        continue;
+      }
+      const animation = buildAttributionFlowAnimation(entry.variant);
+      validateLottie(animation);
+      const report = productionQualityGate(animation, ATTRIBUTION_FLOW_MOTION_SPEC, entry.variant);
+      if (!report.passed) {
+        console.error(`❌ ${entry.id}: production quality failed — ${report.issues.join('; ')}`);
+        rows.push({ id: entry.id, archetype: entry.archetype, file: null, status: 'failed', passed: false, score: report.score, error: report.issues.join('; ') });
+        continue;
+      }
+      fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+      fs.writeFileSync(outPath, `${JSON.stringify(animation, null, 2)}\n`);
+      cache[entry.id] = { hash, path: outPath, score: report.score, generatedAt: new Date().toISOString() };
+      saveCache(cache);
+      console.log(`✅ ${entry.id}: deterministic ${entry.variant} production asset (${report.score}/100)`);
+      rows.push({ id: entry.id, archetype: entry.archetype, file: outPath, status: 'generated', passed: true, score: report.score, iterations: 0, provider: 'deterministic', model: 'attribution-flow-builder', durationMs: Date.now() - t0 });
+      continue;
+    }
+
     try {
       const result = await generateWithQualityGate({
         name: entry.id,

@@ -11,11 +11,12 @@
     "validate:render": "tsx scripts/validate-render.ts",
     "generate": "tsx scripts/generate.ts",
     "generate:batch": "tsx scripts/generate-batch.ts",
+    "build:production-assets": "tsx scripts/build-production-assets.ts",
     "export": "tsx scripts/export.ts",
     "gen": "tsx scripts/generate.ts",
     "showcase": "tsx scripts/showcase.ts",
     "test": "tsx --test src/**/*.test.ts",
-    "check:production": "npm run test && npm run build && npm run validate && npm run validate:render"
+    "check:production": "npm run build:production-assets && npm run test && npm run build && npm run validate && npm run validate:render"
   },
   "dependencies": {
     "lottie-react": "^2.4.0",

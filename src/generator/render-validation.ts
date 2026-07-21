@@ -15,8 +15,11 @@ export interface RenderProbeResult {
   totalFrames: number;
   sampledFrames: number[];
   paintedPixels: number[];
+  changedPixelsFromPrevious: number[];
   paintedSampleCount: number;
+  meaningfulMotionSampleCount: number;
   maxPaintedPixels: number;
+  loopSeamChangedPixels: number;
 }
 
 export function findChromium(): string {
@@ -56,9 +59,13 @@ export async function probeAnimationRender(
 
     const svg = document.querySelector<SVGSVGElement>('#anim svg');
     const totalFrames = anim.totalFrames as number;
-    const sampledFrames = [0, 0.25, 0.5, 0.75, 0.99]
+    const sampledFrames = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.99]
       .map((fraction) => Math.floor(fraction * (totalFrames - 1)));
     const paintedPixels: number[] = [];
+    const changedPixelsFromPrevious: number[] = [];
+    let firstPixels: Uint8ClampedArray | null = null;
+    let previousPixels: Uint8ClampedArray | null = null;
+    let loopSeamChangedPixels = 0;
 
     if (svg) {
       for (const frame of sampledFrames) {
@@ -90,7 +97,34 @@ export async function probeAnimationRender(
           for (let offset = 3; offset < pixels.length; offset += 4) {
             if (pixels[offset] > 8) painted++;
           }
+          let changed = 0;
+          if (previousPixels) {
+            for (let offset = 0; offset < pixels.length; offset += 4) {
+              const difference = Math.max(
+                Math.abs(pixels[offset] - previousPixels[offset]),
+                Math.abs(pixels[offset + 1] - previousPixels[offset + 1]),
+                Math.abs(pixels[offset + 2] - previousPixels[offset + 2]),
+                Math.abs(pixels[offset + 3] - previousPixels[offset + 3]),
+              );
+              if (difference > 12) changed++;
+            }
+          }
+          if (!firstPixels) firstPixels = new Uint8ClampedArray(pixels);
+          previousPixels = new Uint8ClampedArray(pixels);
+          changedPixelsFromPrevious.push(changed);
         paintedPixels.push(painted);
+      }
+
+      if (firstPixels && previousPixels) {
+        for (let offset = 0; offset < firstPixels.length; offset += 4) {
+          const difference = Math.max(
+            Math.abs(firstPixels[offset] - previousPixels[offset]),
+            Math.abs(firstPixels[offset + 1] - previousPixels[offset + 1]),
+            Math.abs(firstPixels[offset + 2] - previousPixels[offset + 2]),
+            Math.abs(firstPixels[offset + 3] - previousPixels[offset + 3]),
+          );
+          if (difference > 12) loopSeamChangedPixels++;
+        }
       }
     }
 
@@ -100,8 +134,11 @@ export async function probeAnimationRender(
       totalFrames,
       sampledFrames,
       paintedPixels,
+      changedPixelsFromPrevious,
       paintedSampleCount: paintedPixels.filter((count) => count > 0).length,
+      meaningfulMotionSampleCount: changedPixelsFromPrevious.filter((count) => count > 8).length,
       maxPaintedPixels: paintedPixels.length > 0 ? Math.max(...paintedPixels) : 0,
+      loopSeamChangedPixels,
     };
   }, animationData);
 }

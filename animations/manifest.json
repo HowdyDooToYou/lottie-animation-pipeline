@@ -1,7 +1,25 @@
 {
-  "version": "1.0",
+  "version": "2.0",
   "generated": "2026-07-21",
   "animations": [
+    {
+      "id": "attribution-flow-01",
+      "archetype": "attribution-flow",
+      "name": "Evidence Attribution Flow",
+      "source": "deterministic",
+      "variant": "desktop",
+      "params": { "width": 960, "height": 540, "duration": 180 },
+      "usage": "production hero / evidence-to-outcome narrative"
+    },
+    {
+      "id": "attribution-flow-mobile-01",
+      "archetype": "attribution-flow",
+      "name": "Evidence Attribution Flow Mobile",
+      "source": "deterministic",
+      "variant": "mobile",
+      "params": { "width": 540, "height": 960, "duration": 180 },
+      "usage": "production mobile / evidence-to-outcome narrative"
+    },
     {
       "id": "hero-orbit-01",
       "archetype": "hero-orbit",
