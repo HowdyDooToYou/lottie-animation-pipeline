@@ -38,10 +38,10 @@ export const MOTION_PRESETS = {
   },
   energetic: {
     duration: 0.6,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1.0)',
-    description: 'Snappy, bouncy, attention-grabbing. Great for CTAs.',
+    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    description: 'Fast, decisive, attention-directing. Great for CTAs.',
     fps: 60,
-    scale: 1.1,
+    scale: 1.04,
   },
   subtle: {
     duration: 2.0,

@@ -1,0 +1,42 @@
+name: Premium interest
+description: Tell us which optional managed, team, recipe-pack, support, or OEM offering would save real production time.
+title: "[Premium interest] "
+labels:
+  - premium-interest
+body:
+  - type: markdown
+    attributes:
+      value: |
+        MotionProof Core is free for commercial use under MIT or Apache-2.0. This form is only for optional future offerings. Do not post confidential, legal, security, or purchasing information here.
+  - type: dropdown
+    id: offering
+    attributes:
+      label: Most useful offering
+      options:
+        - Curated premium recipe pack
+        - Private brand-system pack
+        - Hosted studio and asset history
+        - Team recipe registry and approvals
+        - Priority implementation support
+        - OEM or enterprise deployment help
+    validations:
+      required: true
+  - type: input
+    id: organization
+    attributes:
+      label: Organization or project
+      description: Optional public name only.
+  - type: textarea
+    id: job
+    attributes:
+      label: Production job to be done
+      description: What motion workflow is expensive, unreliable, or repetitive today?
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: What would make it worth paying for?
+      description: Describe the measurable time saved, risk removed, or capability unlocked.
+    validations:
+      required: true

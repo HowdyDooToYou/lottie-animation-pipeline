@@ -1,9 +1,43 @@
 {
-  "name": "lottie-animation-pipeline",
-  "version": "1.0.1",
-  "description": "Production motion system for semantic, responsive, validated Lottie animations",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "name": "motionproof",
+  "version": "2.0.0",
+  "description": "Provider-neutral prompt-to-Lottie compiler with browser-render certification and production proof",
+  "license": "MIT OR Apache-2.0",
   "author": "HowdyDooToYou",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "motionproof": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "plugins/motionproof",
+    "docs/agent-integration.md",
+    "docs/public-release-audit.md",
+    "docs/motionproof-contract.md",
+    "docs/assets/production-motion-showcase.gif",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "SECURITY.md",
+    "LICENSE.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "NOTICE",
+    "OPEN_CORE.md",
+    "TRADEMARKS.md",
+    "CONTRIBUTING.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HowdyDooToYou/lottie-animation-pipeline.git"
@@ -14,16 +48,27 @@
   },
   "keywords": [
     "lottie",
+    "prompt-to-lottie",
     "animation",
     "motion-design",
     "design-system",
     "accessibility",
-    "react"
+    "ai-agents",
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "mcp",
+    "react",
+    "open-source"
   ],
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && npm run build:sdk && vite build",
+    "build:sites": "tsx scripts/build-sites-artifact.ts",
+    "build:sdk": "tsup",
+    "prepack": "npm run build:sdk",
+    "prepublishOnly": "npm run check:release",
     "preview": "vite preview",
     "validate": "tsx scripts/validate.ts",
     "validate:render": "tsx scripts/validate-render.ts",
@@ -33,16 +78,17 @@
     "render:readme-showcase": "tsx scripts/render-readme-showcase.ts",
     "export": "tsx scripts/export.ts",
     "gen": "tsx scripts/generate.ts",
+    "motionproof": "tsx src/motionproof/cli.ts",
     "showcase": "tsx scripts/showcase.ts",
     "test": "tsx --test src/**/*.test.ts",
     "check:public": "tsx scripts/check-public-readiness.ts",
+    "check:package": "tsx scripts/check-package-install.ts",
     "check:production": "npm run build:production-assets && npm run test && npm run build && npm run validate && npm run validate:render",
-    "check:release": "npm run check:public && npm run check:production"
+    "check:release": "npm run check:public && npm run check:production && npm run check:package"
   },
   "dependencies": {
-    "lottie-react": "^2.4.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "lottie-web": "^5.13.0",
+    "puppeteer-core": "^25.3.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -50,13 +96,25 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "lottie-web": "^5.13.0",
-    "puppeteer-core": "^25.3.0",
+    "lottie-react": "^2.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vite": "^6.0.3"
   },
   "overrides": {
-    "postcss": "^8.5.23"
+    "postcss": "^8.5.23",
+    "tsup": {
+      "esbuild": "^0.28.1"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
   }
 }

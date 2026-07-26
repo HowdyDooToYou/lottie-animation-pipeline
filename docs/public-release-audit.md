@@ -1,36 +1,66 @@
 # Public release audit
 
-Audit date: 2026-07-21
+Audit date: 2026-07-26
 
-This document records the evidence used to approve the first public source-available release. It is operational evidence, not legal advice.
+This document records the evidence used to approve the first public open-source
+release. It is operational evidence, not legal advice.
 
 ## Ownership and licensing
 
 - Repository owner and initial licensor: `HowdyDooToYou`.
 - Commit attribution resolves to the same GitHub account email across the repository history.
-- Project license: PolyForm Noncommercial 1.0.0.
-- Commercial use is reserved for separately executed paid licenses.
-- Unsolicited code contributions are not currently accepted, preventing ambiguous relicensing rights.
+- Project license expression: `MIT OR Apache-2.0`.
+- Recipients may select either license, including for commercial use.
+- Canonical terms ship as `LICENSE-MIT` and `LICENSE-APACHE`, with the choice
+  and scope summarized in `LICENSE.md`.
+- Contributions are accepted under the same dual-license choice; the inbound
+  terms are explicit in `CONTRIBUTING.md`.
+- Future paid packs, hosted capabilities, support, and OEM services are
+  separate offerings and do not narrow rights in released core versions.
 
 ## Security
 
-- Gitleaks 8.30.1 scanned all 26 pre-release commits with redaction enabled: zero findings.
-- The release gate scans the current public tree for credential patterns and private absolute paths.
-- `npm audit --omit=dev --audit-level=high`: zero vulnerabilities.
-- `npm audit --audit-level=high`: zero vulnerabilities.
+- An earlier Gitleaks 8.30.1 history scan covered the first 26 pre-release
+  commits with redaction enabled and returned zero findings.
+- The current release gate scanned 151 public-tree files for credential
+  patterns and private absolute paths.
+- `npm audit --omit=dev --audit-level=low`: zero vulnerabilities.
+- `npm audit --audit-level=low`: zero vulnerabilities.
 - `.env` is ignored; `.env.example` contains placeholders only.
 - Vulnerability reports route to GitHub private security advisories.
 
 ## Dependency licensing
 
-- 174 resolved packages inspected from `package-lock.json`.
-- License inventory: 156 MIT, 9 ISC, 6 Apache-2.0, 2 BSD-3-Clause, and 1 CC-BY-4.0.
+- 206 resolved package records inspected from `package-lock.json`.
+- License inventory: 186 MIT, 9 ISC, 7 Apache-2.0, 3 BSD-3-Clause, and 1
+  CC-BY-4.0.
 - The CC-BY-4.0 item is the transitive `caniuse-lite` browser-compatibility dataset and is acknowledged in `THIRD_PARTY_NOTICES.md`.
 
 ## Product validation
 
-The release is approved only when `npm run check:release` passes. That command verifies public-release files and metadata, rebuilds deterministic production assets, runs the complete test and TypeScript/Vite build lanes, strictly validates every production Lottie file, and renders every production animation in Chromium.
+The release is approved only when `npm run check:release` passes. That command
+verifies public-release files and metadata, rebuilds deterministic production
+assets, runs 52 automated tests plus the complete TypeScript/Vite build lanes,
+strictly validates every production Lottie file, renders every production
+animation in Chromium, packs the npm tarball, installs it in a clean consumer project,
+imports the SDK, invokes the npm binary, creates a certified five-file bundle,
+and completes an MCP handshake through the packaged plugin launcher.
 
-## Known commercial boundary
+The browser product was also exercised at 1440 px and 390 px with zero console,
+page, or failed-request errors. Both animation surfaces rendered, recipe
+selection and clipboard feedback worked, the document had no horizontal
+overflow, and reduced-motion mode stopped on a poster frame with an explicit
+play control. The Impeccable source audit returned zero interface
+anti-patterns.
 
-The repository provides source, deterministic builders, validation, and runtime components. It does not yet include automated checkout, license-key enforcement, hosted infrastructure, or a service-level agreement. Commercial rights are granted only through a separately accepted order or license agreement.
+## Open-core boundary
+
+The repository provides the complete local core: source, deterministic recipes,
+a typed SDK and CLI, local agent integrations, validation, artifact packaging,
+and the product studio. Commercial use of that core does not require a separate
+agreement.
+
+No premium pack, hosted service, enterprise control plane, warranty, or
+service-level agreement is included or currently offered. If introduced, those
+separate products and services may use separate terms. The planned boundary is
+documented in `OPEN_CORE.md`.
