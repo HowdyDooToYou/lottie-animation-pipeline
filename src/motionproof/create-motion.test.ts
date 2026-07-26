@@ -10,6 +10,7 @@ import puppeteer from 'puppeteer-core';
 import { findChromium } from '../generator/render-validation.ts';
 import { createMotion } from './create-motion.ts';
 import { createCandidateProvider } from './provider.ts';
+import { chromiumLaunchArguments } from './render.ts';
 
 test('createMotion promotes one complete certified bundle with verifiable hashes', async (t) => {
   const outputRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'motionproof-test-'));
@@ -51,13 +52,7 @@ test('createMotion promotes one complete certified bundle with verifiable hashes
   const browser = await puppeteer.launch({
     executablePath: findChromium(),
     headless: true,
-    args: [
-      '--disable-background-networking',
-      '--disable-dev-shm-usage',
-      ...(typeof process.getuid === 'function' && process.getuid() === 0
-        ? ['--no-sandbox', '--disable-setuid-sandbox']
-        : []),
-    ],
+    args: chromiumLaunchArguments(),
   });
   try {
     const page = await browser.newPage();

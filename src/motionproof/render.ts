@@ -107,7 +107,7 @@ function finiteDimension(value: unknown, fallback: number): number {
     : fallback;
 }
 
-function chromiumLaunchArguments(): string[] {
+export function chromiumLaunchArguments(): string[] {
   const args = ['--disable-background-networking', '--disable-dev-shm-usage'];
   const runningAsRoot = process.platform !== 'win32'
     && typeof process.getuid === 'function'
