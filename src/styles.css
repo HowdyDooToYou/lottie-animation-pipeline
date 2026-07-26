@@ -9,14 +9,19 @@
   --paper-low: oklch(90% 0.025 78);
   --ink: oklch(20% 0.025 255);
   --ink-soft: oklch(40% 0.025 255);
-  --ink-faint: oklch(56% 0.02 255);
+  --ink-faint: oklch(50% 0.02 255);
   --separator: oklch(80% 0.025 78);
-  --signal: oklch(63% 0.19 38);
+  --signal: oklch(55% 0.18 38);
   --signal-dark: oklch(47% 0.16 36);
+  --signal-on-dark: oklch(79% 0.13 50);
+  --on-signal: oklch(99% 0.005 80);
+  --on-signal-muted: oklch(96% 0.012 80);
   --success: oklch(70% 0.16 145);
+  --success-on-dark: oklch(91% 0.09 145);
   --stage: oklch(17% 0.023 255);
   --stage-high: oklch(22% 0.025 255);
   --stage-line: oklch(31% 0.025 255);
+  --stage-muted: oklch(62% 0.02 255);
   --stage-text: oklch(94% 0.01 80);
   --space-section: 96px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -540,7 +545,7 @@ svg {
   justify-content: center;
   gap: 10px;
   background: var(--signal);
-  color: oklch(99% 0.005 80);
+  color: var(--on-signal);
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
@@ -636,7 +641,7 @@ svg {
 }
 
 .recipe.active > span {
-  color: var(--signal);
+  color: var(--signal-on-dark);
 }
 
 .recipe strong,
@@ -852,7 +857,7 @@ svg {
 
 .artifact-intro {
   background: var(--signal);
-  color: oklch(99% 0.005 80);
+  color: var(--on-signal);
 }
 
 .artifact-intro svg {
@@ -903,7 +908,7 @@ svg {
 }
 
 .agent-section .eyebrow {
-  color: var(--signal);
+  color: var(--signal-on-dark);
 }
 
 .agent-statement p:not(.eyebrow) {
@@ -929,7 +934,7 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: oklch(55% 0.02 255);
+  color: var(--stage-muted);
   font: 700 9px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
 }
 
@@ -961,11 +966,11 @@ svg {
 }
 
 .term-comment {
-  color: oklch(54% 0.02 255);
+  color: var(--stage-muted);
 }
 
 .term-command {
-  color: var(--signal);
+  color: var(--signal-on-dark);
 }
 
 .term-success {
@@ -1005,7 +1010,7 @@ svg {
 
 .integration-ribbon span::before {
   margin-right: 8px;
-  color: var(--signal);
+  color: var(--signal-on-dark);
   content: "+";
 }
 
@@ -1082,11 +1087,11 @@ svg {
   align-items: center;
   gap: 48px;
   background: var(--signal);
-  color: oklch(99% 0.005 80);
+  color: var(--on-signal);
 }
 
 .closing-section .eyebrow {
-  color: oklch(99% 0.005 80 / 0.72);
+  color: var(--on-signal-muted);
 }
 
 .closing-mark {
@@ -1148,21 +1153,21 @@ svg {
   justify-content: space-between;
   gap: 16px 28px;
   background: var(--signal-dark);
-  color: oklch(99% 0.005 80);
+  color: var(--on-signal);
   font-size: 11px;
 }
 
 .footer-wordmark {
-  color: oklch(99% 0.005 80);
+  color: var(--on-signal);
 }
 
 .footer-wordmark .wordmark-proof {
-  color: var(--success);
+  color: var(--success-on-dark);
 }
 
 .site-footer p {
   margin: 0;
-  color: oklch(99% 0.005 80 / 0.72);
+  color: var(--on-signal-muted);
 }
 
 @keyframes spin {
