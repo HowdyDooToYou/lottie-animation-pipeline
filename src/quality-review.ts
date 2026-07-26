@@ -1,4 +1,4 @@
-import lottie, { type AnimationItem } from 'lottie-web';
+import lottie, { type AnimationItem } from 'lottie-web/build/player/lottie_light';
 import './quality-review.css';
 
 interface ReviewSample {
@@ -71,7 +71,7 @@ root.innerHTML = `
   </section>
   <footer>
     <span>Reduced-motion preferences are respected automatically.</span>
-    <span>Generated and verified 2026-07-21.</span>
+    <span>Generated and verified 2026-07-26.</span>
   </footer>
 `;
 

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "soliddd-motion": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/soliddd-mcp.cjs"
+      ]
+    }
+  }
+}

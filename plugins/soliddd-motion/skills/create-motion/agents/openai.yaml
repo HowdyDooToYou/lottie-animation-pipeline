@@ -1,0 +1,5 @@
+interface:
+  display_name: "Create Motion"
+  short_description: "Create and certify production motion assets"
+  default_prompt: "Use $create-motion to create and certify production-ready motion from my prompt."
+  brand_color: "#E65F43"

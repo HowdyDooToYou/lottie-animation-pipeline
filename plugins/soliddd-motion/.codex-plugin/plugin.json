@@ -1,0 +1,39 @@
+{
+  "name": "soliddd-motion",
+  "version": "2.0.0",
+  "description": "Create and certify production motion bundles from prompts, recipes, or existing Lottie candidates.",
+  "author": {
+    "name": "HowdyDooToYou",
+    "url": "https://github.com/HowdyDooToYou"
+  },
+  "homepage": "https://github.com/HowdyDooToYou/lottie-animation-pipeline",
+  "repository": "https://github.com/HowdyDooToYou/lottie-animation-pipeline",
+  "keywords": [
+    "animation",
+    "lottie",
+    "motion-design",
+    "agent-skills",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Soliddd Motion",
+    "shortDescription": "Create motion that survives production",
+    "longDescription": "Turn a prompt, deterministic recipe, or existing Lottie candidate into an atomic production bundle with browser-render evidence, a reduced-motion poster, hashes, and structured certification.",
+    "developerName": "HowdyDooToYou",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Motion generation",
+      "Lottie certification",
+      "Local MCP"
+    ],
+    "websiteURL": "https://github.com/HowdyDooToYou/lottie-animation-pipeline",
+    "defaultPrompt": [
+      "Create a calm success animation for my product.",
+      "Certify this Lottie before I ship it.",
+      "Add accessible motion to this interface."
+    ],
+    "brandColor": "#E65F43"
+  }
+}

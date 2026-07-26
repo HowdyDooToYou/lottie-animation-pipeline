@@ -69,7 +69,7 @@ export function renderShowcaseHtml(title: string, variants: ShowcaseVariant[]): 
   <title>${escapeHtml(title)}</title>
   <style>
     :root { --bg:#0b1020; --panel:#121a2b; --panel2:#0f1726; --text:#e8eefc; --muted:#9aa8c7; --border:#24314d; --blue:#408ff5; --gold:#ffc240; --mint:#40d6ab; }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#0a1220,#0b1020);color:var(--text)}
+    *{box-sizing:border-box} body{margin:0;font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif;background:linear-gradient(180deg,#0a1220,#0b1020);color:var(--text)}
     .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 60px}
     .hero,.card{background:var(--panel);border:1px solid var(--border);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
     .hero{padding:24px;margin-bottom:20px}.hero h1{margin:0 0 8px;font-size:32px}.hero p{margin:0;color:var(--muted)}

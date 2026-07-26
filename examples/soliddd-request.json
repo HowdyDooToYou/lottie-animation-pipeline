@@ -1,0 +1,8 @@
+{
+  "id": "checkout-success",
+  "prompt": "A calm checkout success state",
+  "recipe": "success-seal",
+  "preset": "calm",
+  "description": "A restrained confirmation that checkout completed successfully.",
+  "maxAttempts": 1
+}

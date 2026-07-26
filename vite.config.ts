@@ -10,6 +10,7 @@ export default defineConfig({
     open: false,
   },
   build: {
+    outDir: 'studio-dist',
     rollupOptions: {
       input: {
         main: resolve(process.cwd(), 'index.html'),

@@ -1,6 +1,7 @@
 # Commercial licensing
 
-Commercial use of this repository, its production pipeline, or its bundled animation assets requires a paid license from HowdyDooToYou.
+Commercial use of the Soliddd compiler, SDK, CLI, agent integrations, or bundled
+motion recipes requires a paid license from HowdyDooToYou.
 
 This page is a product and pricing overview, not a license grant. Commercial rights begin only when both parties accept a written order or license agreement.
 
@@ -22,7 +23,9 @@ Volume, enterprise, education, and custom-support terms are available by agreeme
 - Updates released during the subscription term.
 - Product embedding, redistribution, or hosted-generation rights when explicitly included in a Product / OEM order.
 
-Unless a signed order says otherwise, a commercial license does not permit reselling, relicensing, or offering the pipeline itself as a competing standalone product.
+Unless a signed order says otherwise, a commercial license does not permit
+reselling, relicensing, or offering Soliddd itself as a competing standalone
+product.
 
 ## Request a license
 
