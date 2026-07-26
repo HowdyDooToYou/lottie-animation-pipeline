@@ -16,6 +16,12 @@
 </p>
 
 <p align="center">
+  <a href="https://motionproof.misty-myna-3764.chatgpt.site"><strong>Open the live studio →</strong></a>
+  ·
+  <a href="https://moreproof.dev/work/motionproof">Read the production proof →</a>
+</p>
+
+<p align="center">
   <img src="docs/assets/production-motion-showcase.gif" width="960" alt="A responsive Lottie evidence flow rendered in desktop and mobile compositions." />
 </p>
 
