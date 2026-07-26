@@ -15,6 +15,7 @@
   --signal-dark: oklch(47% 0.16 36);
   --signal-on-dark: oklch(79% 0.13 50);
   --on-signal: oklch(99% 0.005 80);
+  --on-signal-muted: oklch(96% 0.012 80);
   --success: oklch(70% 0.16 145);
   --success-on-dark: oklch(91% 0.09 145);
   --stage: oklch(17% 0.023 255);
@@ -1090,7 +1091,7 @@ svg {
 }
 
 .closing-section .eyebrow {
-  color: var(--on-signal);
+  color: var(--on-signal-muted);
 }
 
 .closing-mark {
@@ -1166,7 +1167,7 @@ svg {
 
 .site-footer p {
   margin: 0;
-  color: var(--on-signal);
+  color: var(--on-signal-muted);
 }
 
 @keyframes spin {

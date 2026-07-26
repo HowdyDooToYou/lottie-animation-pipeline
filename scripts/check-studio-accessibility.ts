@@ -1,5 +1,10 @@
 #!/usr/bin/env tsx
 
+/**
+ * Repository-only release gate. It audits the built studio from the project
+ * root and is intentionally not part of the published MotionProof package.
+ */
+
 import { createServer, type Server } from 'node:http';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';

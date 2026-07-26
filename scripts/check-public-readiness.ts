@@ -45,12 +45,20 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
   version?: string;
   license?: string;
   repository?: { url?: string };
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
 };
 if (packageJson.license !== 'MIT OR Apache-2.0') {
   issues.push('package.json must declare the dual-license choice: MIT OR Apache-2.0');
 }
 if (!packageJson.version || packageJson.version.startsWith('0.')) issues.push('public production release must use a stable major version');
 if (!packageJson.repository?.url?.includes('HowdyDooToYou/lottie-animation-pipeline')) issues.push('package.json repository URL is missing or incorrect');
+if (packageJson.dependencies?.['axe-core']) {
+  issues.push('axe-core must remain a development-only release auditor');
+}
+if (!packageJson.devDependencies?.['axe-core']) {
+  issues.push('the built-studio accessibility gate requires axe-core in devDependencies');
+}
 
 const tracked = execFileSync('git', ['ls-files', '-co', '--exclude-standard'], { encoding: 'utf8' })
   .split('\n')
