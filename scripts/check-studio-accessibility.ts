@@ -71,7 +71,8 @@ const browser = await puppeteer.launch({
   args: chromiumLaunchArguments(),
 });
 
-let failureCount = 0;
+let runtimeErrorCount = 0;
+let violationCount = 0;
 
 try {
   for (const profile of profiles) {
@@ -118,7 +119,7 @@ try {
       });
 
       if (runtimeErrors.length > 0) {
-        failureCount += runtimeErrors.length;
+        runtimeErrorCount += runtimeErrors.length;
         console.error(
           `❌ ${profile.name}: ${runtimeErrors.length} browser error(s)\n`
           + runtimeErrors.map((error) => `  - ${error}`).join('\n'),
@@ -130,7 +131,7 @@ try {
         continue;
       }
 
-      failureCount += result.violations.length;
+      violationCount += result.violations.length;
       for (const violation of result.violations) {
         console.error(
           `❌ ${profile.name}: ${violation.id} (${violation.impact ?? 'unknown'}) — `
@@ -149,8 +150,11 @@ try {
   await closeServer(server);
 }
 
-if (failureCount > 0) {
-  throw new Error(`Studio accessibility gate failed with ${failureCount} issue(s)`);
+if (violationCount > 0 || runtimeErrorCount > 0) {
+  throw new Error(
+    'Studio accessibility gate failed: '
+    + `${violationCount} WCAG violation(s), ${runtimeErrorCount} runtime browser error(s)`,
+  );
 }
 
 console.log('✅ Studio accessibility: desktop + mobile reduced-motion profiles passed');
@@ -196,11 +200,22 @@ function closeServer(server: Server): Promise<void> {
 
 function contentType(filePath: string): string {
   switch (path.extname(filePath)) {
+    case '.avif': return 'image/avif';
     case '.css': return 'text/css; charset=utf-8';
+    case '.gif': return 'image/gif';
     case '.html': return 'text/html; charset=utf-8';
+    case '.ico': return 'image/x-icon';
     case '.js': return 'text/javascript; charset=utf-8';
+    case '.jpeg':
+    case '.jpg': return 'image/jpeg';
     case '.json': return 'application/json; charset=utf-8';
+    case '.otf': return 'font/otf';
+    case '.png': return 'image/png';
     case '.svg': return 'image/svg+xml';
+    case '.ttf': return 'font/ttf';
+    case '.webp': return 'image/webp';
+    case '.woff': return 'font/woff';
+    case '.woff2': return 'font/woff2';
     default: return 'application/octet-stream';
   }
 }
