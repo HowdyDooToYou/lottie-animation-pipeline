@@ -3,6 +3,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const root = process.cwd();
 const hostingRoot = path.join(root, 'hosting');
@@ -31,14 +32,35 @@ fs.mkdirSync(path.dirname(deployedManifest), { recursive: true });
 fs.copyFileSync(hostingManifest, deployedManifest);
 
 const serverEntry = path.join(hostingBuild, 'server', 'index.js');
+const workerConfigPath = path.join(hostingBuild, 'server', 'wrangler.json');
 if (!fs.existsSync(serverEntry)) {
   throw new Error(`Sites build is missing its server entry: ${serverEntry}`);
+}
+if (!fs.existsSync(workerConfigPath)) {
+  throw new Error(`Sites build is missing its Worker configuration: ${workerConfigPath}`);
 }
 if (!fs.existsSync(path.join(hostingBuild, 'client', 'studio', 'index.html'))) {
   throw new Error('Sites build is missing the MotionProof studio entry');
 }
 
-console.log('✅ Sites artifact: hosting/dist/server/index.js + hosted MotionProof studio');
+const workerModule = await import(`${pathToFileURL(serverEntry).href}?build=${Date.now()}`);
+if (typeof workerModule.default?.fetch !== 'function') {
+  throw new Error(
+    'Sites server entry must export a Cloudflare Worker object with a fetch() handler',
+  );
+}
+
+const workerConfig = JSON.parse(fs.readFileSync(workerConfigPath, 'utf8')) as {
+  main?: string;
+  assets?: { directory?: string };
+};
+if (workerConfig.main !== 'index.js' || workerConfig.assets?.directory !== '../client') {
+  throw new Error('Sites Worker configuration does not bind the built server and client assets');
+}
+
+console.log(
+  '✅ Sites artifact: Cloudflare Worker fetch entry + hosted MotionProof studio',
+);
 
 function run(
   command: string,
