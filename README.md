@@ -241,7 +241,8 @@ MotionProof is the simpler public compiler surface over that proven engine.
 npm run dev              # Product studio on http://localhost:3300
 npm test                 # Unit + real Chromium tests
 npm run build            # Studio + typed SDK + CLI
-npm run check:production # Assets, tests, build, schema, browser rendering
+npm run check:accessibility # Built-studio WCAG A/AA audit
+npm run check:production # Assets, tests, build, accessibility, rendering
 npm run check:release    # Complete public release gate
 ```
 
@@ -287,8 +288,9 @@ the operator's responsibility.
 - Certification uses the expression-free light player in a network-blocked
   Chromium page.
 - Failed candidates never enter the output bundle.
-- Dependency licensing, secrets, private paths, schema validity, and Chromium
-  rendering are checked by `npm run check:release`.
+- Dependency licensing, secrets, private paths, schema validity, Chromium
+  rendering, and built-studio accessibility are checked by
+  `npm run check:release`.
 
 See [SECURITY.md](SECURITY.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 [TRADEMARKS.md](TRADEMARKS.md), and

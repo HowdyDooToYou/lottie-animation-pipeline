@@ -22,7 +22,7 @@ release. It is operational evidence, not legal advice.
 
 - An earlier Gitleaks 8.30.1 history scan covered the first 26 pre-release
   commits with redaction enabled and returned zero findings.
-- The current release gate scanned 151 public-tree files for credential
+- The current release gate scanned 163 public-tree files for credential
   patterns and private absolute paths.
 - `npm audit --omit=dev --audit-level=low`: zero vulnerabilities.
 - `npm audit --audit-level=low`: zero vulnerabilities.
@@ -31,20 +31,24 @@ release. It is operational evidence, not legal advice.
 
 ## Dependency licensing
 
-- 206 resolved package records inspected from `package-lock.json`.
-- License inventory: 186 MIT, 9 ISC, 7 Apache-2.0, 3 BSD-3-Clause, and 1
-  CC-BY-4.0.
+- 207 resolved package records inspected from `package-lock.json`.
+- License inventory: 186 MIT, 9 ISC, 7 Apache-2.0, 3 BSD-3-Clause, 1
+  CC-BY-4.0, and 1 MPL-2.0.
 - The CC-BY-4.0 item is the transitive `caniuse-lite` browser-compatibility dataset and is acknowledged in `THIRD_PARTY_NOTICES.md`.
+- The MPL-2.0 item is the development-only `axe-core` accessibility auditor;
+  it is not included in the published package.
 
 ## Product validation
 
 The release is approved only when `npm run check:release` passes. That command
 verifies public-release files and metadata, rebuilds deterministic production
 assets, runs 52 automated tests plus the complete TypeScript/Vite build lanes,
-strictly validates every production Lottie file, renders every production
-animation in Chromium, packs the npm tarball, installs it in a clean consumer project,
-imports the SDK, invokes the npm binary, creates a certified five-file bundle,
-and completes an MCP handshake through the packaged plugin launcher.
+audits the built studio against WCAG A/AA at desktop and mobile reduced-motion
+profiles, strictly validates every production Lottie file, renders every
+production animation in Chromium, packs the npm tarball, installs it in a clean
+consumer project, imports the SDK, invokes the npm binary, creates a certified
+five-file bundle, and completes an MCP handshake through the packaged plugin
+launcher.
 
 The browser product was also exercised at 1440 px and 390 px with zero console,
 page, or failed-request errors. Both animation surfaces rendered, recipe

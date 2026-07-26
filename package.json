@@ -81,9 +81,10 @@
     "motionproof": "tsx src/motionproof/cli.ts",
     "showcase": "tsx scripts/showcase.ts",
     "test": "tsx --test src/**/*.test.ts",
+    "check:accessibility": "tsx scripts/check-studio-accessibility.ts",
     "check:public": "tsx scripts/check-public-readiness.ts",
     "check:package": "tsx scripts/check-package-install.ts",
-    "check:production": "npm run build:production-assets && npm run test && npm run build && npm run validate && npm run validate:render",
+    "check:production": "npm run build:production-assets && npm run test && npm run build && npm run check:accessibility && npm run validate && npm run validate:render",
     "check:release": "npm run check:public && npm run check:production && npm run check:package"
   },
   "dependencies": {
@@ -96,6 +97,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "axe-core": "^4.12.1",
     "lottie-react": "^2.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
