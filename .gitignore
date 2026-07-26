@@ -1,6 +1,10 @@
 node_modules/
 dist/
 studio-dist/
+hosting/dist/
+hosting/generated/
+hosting/node_modules/
+hosting/public/studio/
 .env
 *.log
 .DS_Store
