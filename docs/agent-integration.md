@@ -3,6 +3,15 @@
 MotionProof supports four integration levels. Choose the smallest surface the host
 can use.
 
+Install the current public release into the host project first:
+
+```bash
+npm install https://github.com/HowdyDooToYou/lottie-animation-pipeline/releases/download/v2.0.0/motionproof-2.0.0.tgz
+```
+
+The commands below then resolve the project-local MotionProof binary. Registry
+publication is a separate future distribution step.
+
 ## 1. JSON CLI
 
 Every coding agent can execute the CLI:
@@ -72,7 +81,7 @@ Example configuration:
   "mcpServers": {
     "motionproof": {
       "command": "npx",
-      "args": ["--yes", "motionproof@2.0.0", "mcp"]
+      "args": ["motionproof", "mcp"]
     }
   }
 }

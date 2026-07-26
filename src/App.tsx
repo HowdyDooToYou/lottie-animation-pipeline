@@ -9,7 +9,8 @@ import {
 import { qualityGate, summarizeAnimationPreview } from './generator/quality-gate.ts';
 
 const INITIAL_PROMPT = 'Show three AI agents routing evidence into one verified decision.';
-const INSTALL_COMMAND = 'npm install motionproof';
+const RELEASE_PACKAGE_URL = 'https://github.com/HowdyDooToYou/lottie-animation-pipeline/releases/download/v2.0.0/motionproof-2.0.0.tgz';
+const INSTALL_COMMAND = `npm install ${RELEASE_PACKAGE_URL}`;
 const CREATE_COMMAND = 'npx motionproof create "A calm checkout success state" --id calm-checkout-success';
 
 type StudioStatus = 'ready' | 'creating' | 'certified' | 'error';

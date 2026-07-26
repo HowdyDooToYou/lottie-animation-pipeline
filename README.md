@@ -36,7 +36,16 @@ Anything below the bar returns a structured failure instead of production files.
 
 ## Try it
 
-From this repository:
+Install the current public GitHub release from any project:
+
+```bash
+npm install https://github.com/HowdyDooToYou/lottie-animation-pipeline/releases/download/v2.0.0/motionproof-2.0.0.tgz
+npx motionproof create \
+  "A calm checkout success state" \
+  --id checkout-success
+```
+
+For contributor development from this repository:
 
 ```bash
 npm install
@@ -45,13 +54,8 @@ npm run motionproof -- create \
   --id checkout-success
 ```
 
-After the npm package is published:
-
-```bash
-npx motionproof create \
-  "A calm checkout success state" \
-  --id checkout-success
-```
+The npm registry package name is reserved for the next distribution step; no
+registry publication is claimed until owner authentication is complete.
 
 The zero-key path uses a deterministic production recipe:
 
