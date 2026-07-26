@@ -17,6 +17,8 @@ export interface RenderProbeResult {
   loopSeamChangedPixels: number;
 }
 
+const RENDER_READY_TIMEOUT_MS = 10_000;
+
 export function findChromium(): string {
   const candidates = chromiumCandidates();
   for (const candidate of candidates) {
@@ -73,7 +75,7 @@ export async function probeAnimationRender(
   page: Page,
   animationData: unknown,
 ): Promise<RenderProbeResult> {
-  return page.evaluate(async (data) => {
+  return page.evaluate(async ({ data, renderReadyTimeoutMs }) => {
     const lottie = (window as unknown as { lottie: any }).lottie;
     // Keep one registered animation per page. The caller may use that same
     // instance for a post-probe screenshot before closing the page.
@@ -87,9 +89,18 @@ export async function probeAnimationRender(
     });
 
     await new Promise<void>((resolve, reject) => {
-      anim.addEventListener('DOMLoaded', () => resolve());
-      anim.addEventListener('data_failed', () => reject(new Error('lottie data_failed')));
-      setTimeout(() => reject(new Error('DOMLoaded timeout (3s)')), 3000);
+      const timeout = setTimeout(
+        () => reject(new Error(`DOMLoaded timeout (${renderReadyTimeoutMs / 1000}s)`)),
+        renderReadyTimeoutMs,
+      );
+      anim.addEventListener('DOMLoaded', () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+      anim.addEventListener('data_failed', () => {
+        clearTimeout(timeout);
+        reject(new Error('lottie data_failed'));
+      });
     });
 
     const svg = document.querySelector<SVGSVGElement>('#anim svg');
@@ -175,5 +186,8 @@ export async function probeAnimationRender(
       maxPaintedPixels: paintedPixels.length > 0 ? Math.max(...paintedPixels) : 0,
       loopSeamChangedPixels,
     };
-  }, animationData);
+  }, {
+    data: animationData,
+    renderReadyTimeoutMs: RENDER_READY_TIMEOUT_MS,
+  });
 }

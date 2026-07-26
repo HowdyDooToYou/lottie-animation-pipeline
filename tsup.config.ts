@@ -6,7 +6,7 @@ export default defineConfig({
     cli: 'src/motionproof/bin.ts',
   },
   format: ['esm'],
-  target: 'node20',
+  target: 'node22',
   platform: 'node',
   dts: true,
   clean: true,

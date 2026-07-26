@@ -22,8 +22,10 @@ test('createMotion promotes one complete certified bundle with verifiable hashes
     maxAttempts: 1,
   }, { outputDirectory: outputRoot });
 
-  assert.equal(result.ok, true);
-  if (!result.ok) return;
+  assert.ok(
+    result.ok,
+    `Expected a certified bundle, received:\n${JSON.stringify(result, null, 2)}`,
+  );
   assert.equal(result.certification.certified, true);
   assert.equal(result.artifacts.length, 5);
 

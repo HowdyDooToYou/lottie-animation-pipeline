@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml"><img alt="Production validation" src="https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="LICENSE.md"><img alt="License: MIT or Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-2f70ff" /></a>
-  <img alt="Node 20+" src="https://img.shields.io/badge/node-%3E%3D20-11151b" />
+  <img alt="Node 22.12+" src="https://img.shields.io/badge/node-%3E%3D22.12-11151b" />
 </p>
 
 <p align="center">
@@ -253,7 +253,7 @@ Chromium's sandbox remains enabled by default. Root-run containers automatically
 receive the required no-sandbox flags; other containerized environments can set
 `MOTIONPROOF_CHROMIUM_NO_SANDBOX=1` explicitly.
 
-Node 20+ is supported.
+Node 22.12+ is supported.
 
 ## Open source, including commercial use
 
