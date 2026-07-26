@@ -30,6 +30,7 @@
     "generate": "tsx scripts/generate.ts",
     "generate:batch": "tsx scripts/generate-batch.ts",
     "build:production-assets": "tsx scripts/build-production-assets.ts",
+    "render:readme-showcase": "tsx scripts/render-readme-showcase.ts",
     "export": "tsx scripts/export.ts",
     "gen": "tsx scripts/generate.ts",
     "showcase": "tsx scripts/showcase.ts",

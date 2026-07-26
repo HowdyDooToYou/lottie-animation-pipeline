@@ -9,6 +9,16 @@ Production motion infrastructure for semantic, responsive, accessible, and verif
 
 The pipeline combines deterministic production builders, model-assisted generation, reusable motion contracts, responsive composition, reduced-motion delivery, and browser-level promotion gates. It is built for teams that need animation assets they can defend in production—not merely JSON that happens to parse.
 
+## See it in motion
+
+<p align="center">
+  <img src="docs/assets/production-motion-showcase.gif" width="960" alt="The same attribution-flow animation rendered simultaneously as a horizontal desktop composition and a recomposed vertical mobile composition. Evidence packets travel through persistent connectors into a decision hub and resolve as an attributed outcome." />
+</p>
+
+<p align="center"><sub>Real deterministic Lottie assets rendered in Chromium. Both responsive variants pass the production gate at 100/100.</sub></p>
+
+[Inspect the desktop asset](public/animations/final/attribution-flow-01.json) · [Inspect the mobile asset](public/animations/final/attribution-flow-mobile-01.json) · [Read the production motion contract](docs/production-motion-system.md)
+
 ## Quick Start
 
 ```bash
