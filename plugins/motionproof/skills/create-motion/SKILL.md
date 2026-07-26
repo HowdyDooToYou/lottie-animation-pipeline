@@ -8,6 +8,13 @@ description: Create, certify, or integrate production Lottie motion from a promp
 Produce a MotionProof bundle or return the structured failure. Never describe an
 uncertified candidate as production-ready.
 
+If the host project does not already have MotionProof, install the current
+public release before running the commands below:
+
+```bash
+npm install https://github.com/HowdyDooToYou/lottie-animation-pipeline/releases/download/v2.0.0/motionproof-2.0.0.tgz
+```
+
 ## Choose the route
 
 - Start without a model or API key: use a built-in recipe.
