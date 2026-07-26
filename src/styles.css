@@ -101,12 +101,12 @@ svg {
   align-items: baseline;
   text-decoration: none;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.045em;
 }
 
-.wordmark-dd {
+.wordmark-proof {
   color: var(--signal);
 }
 
@@ -1156,7 +1156,7 @@ svg {
   color: oklch(99% 0.005 80);
 }
 
-.footer-wordmark .wordmark-dd {
+.footer-wordmark .wordmark-proof {
   color: var(--success);
 }
 

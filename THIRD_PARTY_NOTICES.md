@@ -1,6 +1,8 @@
 # Third-party notices
 
-This project depends on third-party packages distributed under their own licenses. Those licenses apply to the respective packages and are not replaced by this project's PolyForm Noncommercial license.
+This project depends on third-party packages distributed under their own
+licenses. Those licenses apply to the respective packages and are not replaced
+by this project's `MIT OR Apache-2.0` license choice.
 
 Direct runtime dependencies:
 

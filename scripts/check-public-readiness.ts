@@ -7,13 +7,17 @@ import path from 'node:path';
 const root = process.cwd();
 const requiredFiles = [
   'LICENSE.md',
-  'COMMERCIAL-LICENSING.md',
+  'LICENSE-MIT',
+  'LICENSE-APACHE',
+  'NOTICE',
+  'OPEN_CORE.md',
+  'TRADEMARKS.md',
   'CONTRIBUTING.md',
   'SECURITY.md',
   'THIRD_PARTY_NOTICES.md',
   'docs/public-release-audit.md',
   '.github/workflows/ci.yml',
-  '.github/ISSUE_TEMPLATE/commercial-license.yml',
+  '.github/ISSUE_TEMPLATE/premium-interest.yml',
 ];
 const allowedLicenses = new Set([
   'MIT', 'ISC', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', '0BSD',
@@ -42,7 +46,9 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
   license?: string;
   repository?: { url?: string };
 };
-if (packageJson.license !== 'SEE LICENSE IN LICENSE.md') issues.push('package.json must point to LICENSE.md');
+if (packageJson.license !== 'MIT OR Apache-2.0') {
+  issues.push('package.json must declare the dual-license choice: MIT OR Apache-2.0');
+}
 if (!packageJson.version || packageJson.version.startsWith('0.')) issues.push('public production release must use a stable major version');
 if (!packageJson.repository?.url?.includes('HowdyDooToYou/lottie-animation-pipeline')) issues.push('package.json repository URL is missing or incorrect');
 

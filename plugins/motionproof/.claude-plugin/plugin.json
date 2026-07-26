@@ -1,0 +1,17 @@
+{
+  "name": "motionproof",
+  "description": "Create and certify production motion bundles from prompts, recipes, or existing Lottie candidates.",
+  "version": "2.0.0",
+  "author": {
+    "name": "HowdyDooToYou"
+  },
+  "homepage": "https://github.com/HowdyDooToYou/lottie-animation-pipeline",
+  "repository": "https://github.com/HowdyDooToYou/lottie-animation-pipeline",
+  "keywords": [
+    "animation",
+    "lottie",
+    "motion-design",
+    "agent-skills",
+    "mcp"
+  ]
+}

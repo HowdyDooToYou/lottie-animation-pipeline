@@ -2,8 +2,8 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
-    index: 'src/soliddd/index.ts',
-    cli: 'src/soliddd/bin.ts',
+    index: 'src/motionproof/index.ts',
+    cli: 'src/motionproof/bin.ts',
   },
   format: ['esm'],
   target: 'node20',

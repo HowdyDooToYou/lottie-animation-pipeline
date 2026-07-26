@@ -5,12 +5,12 @@ import {
   buildRecipeCandidate,
   listBuiltInRecipes,
   type BuiltInRecipeId,
-} from './soliddd/recipes.ts';
+} from './motionproof/recipes.ts';
 import { qualityGate, summarizeAnimationPreview } from './generator/quality-gate.ts';
 
 const INITIAL_PROMPT = 'Show three AI agents routing evidence into one verified decision.';
-const INSTALL_COMMAND = 'npm install soliddd-motion';
-const CREATE_COMMAND = 'npx soliddd-motion create "A calm checkout success state" --id calm-checkout-success';
+const INSTALL_COMMAND = 'npm install motionproof';
+const CREATE_COMMAND = 'npx motionproof create "A calm checkout success state" --id calm-checkout-success';
 
 type StudioStatus = 'ready' | 'creating' | 'certified' | 'error';
 
@@ -91,8 +91,8 @@ function App() {
       <a className="skip-link" href="#main-content">Skip to the studio</a>
 
       <header className="site-header">
-        <a className="wordmark" href="#" aria-label="Soliddd home">
-          <span>SOLID</span><span className="wordmark-dd">DD</span>
+        <a className="wordmark" href="#" aria-label="MotionProof home">
+          <span>MOTION</span><span className="wordmark-proof">PROOF</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="#studio">Studio</a>
@@ -134,6 +134,7 @@ function App() {
               <li>No API key to start</li>
               <li>Provider neutral</li>
               <li>Fails closed</li>
+              <li>MIT / Apache-2.0</li>
             </ul>
           </div>
 
@@ -149,7 +150,7 @@ function App() {
                 <CheckIcon />
               </div>
               <div>
-                <span>SOLIDDD certified</span>
+                <span>MOTIONPROOF certified</span>
                 <strong>{quality.score}/100</strong>
               </div>
               <p>Strict schema · 9-frame raster probe · poster captured</p>
@@ -164,7 +165,7 @@ function App() {
               <h2>A sentence goes in.<br />A release bundle comes out.</h2>
             </div>
             <p>
-              The model is a collaborator, never the quality authority. Soliddd
+              The model is a collaborator, never the quality authority. MotionProof
               promotes only artifacts that survive strict structure, browser
               rendering, motion, complexity, and accessibility checks.
             </p>
@@ -302,8 +303,8 @@ function App() {
             </div>
             <pre><code><span className="term-comment"># Human or coding agent</span>{'\n'}
 <span className="term-command">$</span> {CREATE_COMMAND}{'\n\n'}
-<span className="term-success">SOLIDDD · 97/100 · certified</span>{'\n'}
-./soliddd-output/calm-checkout-success/{'\n'}
+<span className="term-success">MOTIONPROOF · 97/100 · certified</span>{'\n'}
+./motionproof-output/calm-checkout-success/{'\n'}
   animation.json{'\n'}
   poster.png{'\n'}
   preview.html{'\n'}
@@ -329,7 +330,7 @@ function App() {
 
         <section className="contract-section" id="contract">
           <header>
-            <p className="eyebrow">The SOLIDDD contract</p>
+            <p className="eyebrow">The three-D release standard</p>
             <h2>Designed. Deployable. Defensible.</h2>
           </header>
           <div className="contract-flow">
@@ -375,9 +376,11 @@ function App() {
       </main>
 
       <footer className="site-footer">
-        <a className="wordmark footer-wordmark" href="#"><span>SOLID</span><span className="wordmark-dd">DD</span></a>
+        <a className="wordmark footer-wordmark" href="#">
+          <span>MOTION</span><span className="wordmark-proof">PROOF</span>
+        </a>
         <p>Motion that ships. Built in the open by HowdyDooToYou.</p>
-        <span>Soliddd v2</span>
+        <span>MotionProof 2.0 · MIT or Apache-2.0</span>
       </footer>
     </div>
   );

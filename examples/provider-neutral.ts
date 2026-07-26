@@ -2,7 +2,7 @@ import {
   createMotion,
   defineMotionProvider,
   type MotionProviderInput,
-} from 'soliddd-motion';
+} from 'motionproof';
 
 declare function callYourAgent(input: {
   system: string;
@@ -25,7 +25,7 @@ const result = await createMotion({
   maxAttempts: 3,
 }, {
   provider,
-  outputDirectory: './soliddd-output',
+  outputDirectory: './motionproof-output',
 });
 
 if (!result.ok) {

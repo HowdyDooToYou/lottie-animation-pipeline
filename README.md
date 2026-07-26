@@ -1,5 +1,5 @@
 <p align="center">
-  <strong>SOLIDDD</strong>
+  <strong>MOTIONPROOF</strong>
 </p>
 
 <h1 align="center">Motion that ships.</h1>
@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml"><img alt="Production validation" src="https://github.com/HowdyDooToYou/lottie-animation-pipeline/actions/workflows/ci.yml/badge.svg" /></a>
-  <a href="LICENSE.md"><img alt="License: PolyForm Noncommercial" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-e95524" /></a>
+  <a href="LICENSE.md"><img alt="License: MIT or Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-2f70ff" /></a>
   <img alt="Node 20+" src="https://img.shields.io/badge/node-%3E%3D20-11151b" />
 </p>
 
@@ -19,8 +19,8 @@
   <img src="docs/assets/production-motion-showcase.gif" width="960" alt="A responsive Lottie evidence flow rendered in desktop and mobile compositions." />
 </p>
 
-Soliddd is a provider-neutral motion compiler. A model, coding agent, human, or
-deterministic recipe may propose an animation. Soliddd decides whether it is
+MotionProof is a provider-neutral motion compiler. A model, coding agent, human, or
+deterministic recipe may propose an animation. MotionProof decides whether it is
 safe to ship.
 
 It strictly validates the Lottie structure, renders nine representative frames
@@ -34,7 +34,7 @@ From this repository:
 
 ```bash
 npm install
-npm run soliddd -- create \
+npm run motionproof -- create \
   "A calm checkout success state" \
   --id checkout-success
 ```
@@ -42,7 +42,7 @@ npm run soliddd -- create \
 After the npm package is published:
 
 ```bash
-npx soliddd-motion create \
+npx motionproof create \
   "A calm checkout success state" \
   --id checkout-success
 ```
@@ -50,7 +50,7 @@ npx soliddd-motion create \
 The zero-key path uses a deterministic production recipe:
 
 ```text
-soliddd-output/checkout-success/
+motionproof-output/checkout-success/
 ├── animation.json       editable Lottie
 ├── poster.png           reduced-motion fallback
 ├── preview.html         portable offline review
@@ -64,7 +64,7 @@ Open `preview.html`. It contains its own player, respects
 ## Use it in code
 
 ```ts
-import { createMotion } from "soliddd-motion";
+import { createMotion } from "motionproof";
 
 const result = await createMotion({
   prompt: "Show three agents routing evidence into one verified decision",
@@ -84,7 +84,7 @@ The default provider requires no model and no API key. Bring any model through
 one small interface:
 
 ```ts
-import { createMotion, defineMotionProvider } from "soliddd-motion";
+import { createMotion, defineMotionProvider } from "motionproof";
 
 const provider = defineMotionProvider(
   "my-studio-agent",
@@ -109,7 +109,7 @@ Providers may return:
 - JSON text, including a fenced JSON block; or
 - `{ animation, model?, recipe?, notes? }`.
 
-Credentials, billing, and model SDKs stay in the host application. Soliddd owns
+Credentials, billing, and model SDKs stay in the host application. MotionProof owns
 the stable request, certification, and artifact contracts.
 
 ## Use it from any agent
@@ -117,13 +117,13 @@ the stable request, certification, and artifact contracts.
 Machine-readable CLI:
 
 ```bash
-npm run soliddd -- create "A system routing data into a decision" --json
+npm run motionproof -- create "A system routing data into a decision" --json
 ```
 
 Certify Lottie created by another agent:
 
 ```bash
-npm run soliddd -- certify ./candidate.json \
+npm run motionproof -- certify ./candidate.json \
   --prompt "A compact completion confirmation" \
   --json
 ```
@@ -131,7 +131,7 @@ npm run soliddd -- certify ./candidate.json \
 Local MCP server:
 
 ```bash
-npm run soliddd -- mcp
+npm run motionproof -- mcp
 ```
 
 It exposes:
@@ -141,33 +141,33 @@ It exposes:
 - `list_motion_recipes`
 
 The shared Agent Skill and both plugin manifests live in
-[`plugins/soliddd-motion`](plugins/soliddd-motion):
+[`plugins/motionproof`](plugins/motionproof):
 
 ```text
-plugins/soliddd-motion/
+plugins/motionproof/
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 ├── .mcp.json
-├── bin/soliddd-mcp.cjs
+├── bin/motionproof-mcp.cjs
 └── skills/create-motion/SKILL.md
 ```
 
 Claude Code can load the bundle directly during development:
 
 ```bash
-claude --plugin-dir ./plugins/soliddd-motion
+claude --plugin-dir ./plugins/motionproof
 ```
 
 The plugin launcher uses the repository or installed package locally when it is
 available. A standalone marketplace installation falls back to the exact plugin
-version of `soliddd-motion` through npm—never an unpinned latest release.
+version of `motionproof` through npm—never an unpinned latest release.
 
 The same open Agent Skill works in Codex, ChatGPT, Claude Code, and other hosts
 that implement the Agent Skills standard. See
 [`docs/agent-integration.md`](docs/agent-integration.md) for SDK, CLI, MCP, and
 plugin details.
 
-## The SOLIDDD contract
+## The MotionProof contract
 
 Designed. Deployable. Defensible.
 
@@ -185,12 +185,12 @@ Designed. Deployable. Defensible.
 The model is a collaborator, never the quality authority.
 
 Read the full contract in
-[`docs/soliddd-contract.md`](docs/soliddd-contract.md).
+[`docs/motionproof-contract.md`](docs/motionproof-contract.md).
 
 ## Built-in recipes
 
 ```bash
-npm run soliddd -- recipes
+npm run motionproof -- recipes
 ```
 
 | Recipe | Best for |
@@ -221,13 +221,13 @@ prompt, recipe, or candidate JSON
                  │
        ┌─────────┴─────────┐
        │                   │
-  structured failure   SOLIDDD bundle
+  structured failure   MotionProof bundle
 ```
 
 The existing semantic motion specifications, responsive topology contracts,
 runtime playback policy, and production Lottie builders remain available under
 [`src/generator`](https://github.com/HowdyDooToYou/lottie-animation-pipeline/tree/master/src/generator).
-Soliddd is the simpler public compiler surface over that proven engine.
+MotionProof is the simpler public compiler surface over that proven engine.
 
 ## Development
 
@@ -245,27 +245,31 @@ studio to `studio-dist/`.
 Coding agents entering the repository receive the same non-negotiable verifier
 rules through [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md).
 
-Chrome or Chromium is required for certification. Soliddd auto-detects common
+Chrome or Chromium is required for certification. MotionProof auto-detects common
 Linux, macOS, and Windows installations. Set `CHROMIUM_BIN` or pass
 `--chromium <path>` when needed.
 
 Chromium's sandbox remains enabled by default. Root-run containers automatically
 receive the required no-sandbox flags; other containerized environments can set
-`SOLIDDD_CHROMIUM_NO_SANDBOX=1` explicitly.
+`MOTIONPROOF_CHROMIUM_NO_SANDBOX=1` explicitly.
 
 Node 20+ is supported.
 
-## Source and commercial use
+## Open source, including commercial use
 
-The source is publicly inspectable. Noncommercial use is permitted under the
-[PolyForm Noncommercial License 1.0.0](LICENSE.md).
+MotionProof Core is licensed under your choice of
+[MIT or Apache-2.0](LICENSE.md). Use it in commercial production, client work,
+products, hosted services, internal tools, and forks—no paid core license is
+required.
 
-Commercial production, client delivery, product embedding, hosted generation,
-and redistribution require a [commercial license](COMMERCIAL-LICENSING.md).
-Indicative launch plans begin at **$249/year for creators**, **$999/year for
-studios**, and **$4,800/year for Product/OEM use**.
+The SDK, CLI, MCP server, Agent Skill, plugin bundles, deterministic recipes,
+certifier, and local studio are all in the open core. If adoption earns it,
+optional hosted capabilities, team controls, curated recipe packs, OEM help,
+and support may follow as separate paid offerings. Released open-core rights do
+not move backward. Read the plain-language [open-core boundary](OPEN_CORE.md).
 
-Provider/API charges and terms remain the operator's responsibility.
+Provider/API charges, provider terms, and rights in imported material remain
+the operator's responsibility.
 
 ## Security and release integrity
 
@@ -281,4 +285,5 @@ Provider/API charges and terms remain the operator's responsibility.
   rendering are checked by `npm run check:release`.
 
 See [SECURITY.md](SECURITY.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
-and [the public release audit](docs/public-release-audit.md).
+[TRADEMARKS.md](TRADEMARKS.md), and
+[the public release audit](docs/public-release-audit.md).

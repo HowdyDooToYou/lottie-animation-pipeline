@@ -1,17 +1,17 @@
-# Soliddd contributor contract
+# MotionProof contributor contract
 
-Soliddd turns a prompt, recipe, or Lottie candidate into a certified motion
+MotionProof turns a prompt, recipe, or Lottie candidate into a certified motion
 bundle. The provider proposes. The verifier decides. Never bypass, soften, or
 silently repair the production certification path.
 
 ## Start here
 
-- Public SDK and artifact contract: `src/soliddd/`
-- Deterministic recipes: `src/soliddd/recipes.ts`
+- Public SDK and artifact contract: `src/motionproof/`
+- Deterministic recipes: `src/motionproof/recipes.ts`
 - Existing generation engine: `src/generator/`
 - Product studio: `src/App.tsx` and `src/styles.css`
-- Shared Agent Skill and plugins: `plugins/soliddd-motion/`
-- Contract details: `docs/soliddd-contract.md`
+- Shared Agent Skill and plugins: `plugins/motionproof/`
+- Contract details: `docs/motionproof-contract.md`
 
 Keep the public compiler provider-neutral. Credentials, provider SDKs, billing,
 and model-specific settings belong in the host application.
@@ -52,13 +52,13 @@ MCP server, or plugin bundle.
 - Preserve the stable request and result shapes or version the contract.
 - Add a regression test for every certification or packaging defect.
 - Keep built-in recipes deterministic and zero-key.
-- Keep `src/soliddd/recipe-assets/` byte-identical to the matching public demos;
+- Keep `src/motionproof/recipe-assets/` byte-identical to the matching public demos;
   the parity test enforces this.
 - Treat model/provider output as untrusted data.
 - Keep the certified subset expression-free, vector-only, and free of external
   media or font dependencies.
 - Keep Chrome's sandbox enabled except for root-run containers or an explicit
-  `SOLIDDD_CHROMIUM_NO_SANDBOX=1` operator choice.
+  `MOTIONPROOF_CHROMIUM_NO_SANDBOX=1` operator choice.
 - Update the CLI, SDK, MCP schemas, Agent Skill, and docs together when the
   public contract changes.
 - Do not commit provider credentials, generated customer prompts, or local

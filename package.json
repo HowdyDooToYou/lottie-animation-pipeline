@@ -1,8 +1,8 @@
 {
-  "name": "soliddd-motion",
+  "name": "motionproof",
   "version": "2.0.0",
-  "description": "Motion that ships: prompt or recipe in, certified production artifacts out",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "description": "Provider-neutral prompt-to-Lottie compiler with browser-render certification and production proof",
+  "license": "MIT OR Apache-2.0",
   "author": "HowdyDooToYou",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -13,21 +13,26 @@
     }
   },
   "bin": {
-    "soliddd": "dist/cli.js"
+    "motionproof": "dist/cli.js"
   },
   "files": [
     "dist",
-    "plugins/soliddd-motion",
+    "plugins/motionproof",
     "docs/agent-integration.md",
     "docs/public-release-audit.md",
-    "docs/soliddd-contract.md",
+    "docs/motionproof-contract.md",
     "docs/assets/production-motion-showcase.gif",
     "AGENTS.md",
     "CLAUDE.md",
     "README.md",
     "SECURITY.md",
     "LICENSE.md",
-    "COMMERCIAL-LICENSING.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "NOTICE",
+    "OPEN_CORE.md",
+    "TRADEMARKS.md",
+    "CONTRIBUTING.md",
     "THIRD_PARTY_NOTICES.md"
   ],
   "engines": {
@@ -43,6 +48,7 @@
   },
   "keywords": [
     "lottie",
+    "prompt-to-lottie",
     "animation",
     "motion-design",
     "design-system",
@@ -52,7 +58,8 @@
     "claude-code",
     "codex",
     "mcp",
-    "react"
+    "react",
+    "open-source"
   ],
   "type": "module",
   "scripts": {
@@ -70,7 +77,7 @@
     "render:readme-showcase": "tsx scripts/render-readme-showcase.ts",
     "export": "tsx scripts/export.ts",
     "gen": "tsx scripts/generate.ts",
-    "soliddd": "tsx src/soliddd/cli.ts",
+    "motionproof": "tsx src/motionproof/cli.ts",
     "showcase": "tsx scripts/showcase.ts",
     "test": "tsx --test src/**/*.test.ts",
     "check:public": "tsx scripts/check-public-readiness.ts",

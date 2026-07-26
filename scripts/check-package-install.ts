@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'soliddd-package-check-'));
+const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'motionproof-package-check-'));
 const packDirectory = path.join(sandbox, 'pack');
 const consumerDirectory = path.join(sandbox, 'consumer');
 
@@ -42,11 +42,17 @@ try {
     'dist/cli.js',
     'AGENTS.md',
     'SECURITY.md',
+    'LICENSE.md',
+    'LICENSE-MIT',
+    'LICENSE-APACHE',
+    'NOTICE',
+    'OPEN_CORE.md',
+    'TRADEMARKS.md',
     'docs/agent-integration.md',
     'docs/public-release-audit.md',
-    'docs/soliddd-contract.md',
+    'docs/motionproof-contract.md',
     'docs/assets/production-motion-showcase.gif',
-    'plugins/soliddd-motion/bin/soliddd-mcp.cjs',
+    'plugins/motionproof/bin/motionproof-mcp.cjs',
   ]) {
     if (!packedFiles.has(expected)) {
       throw new Error(`npm package is missing ${expected}`);
@@ -56,11 +62,11 @@ try {
   fs.writeFileSync(
     path.join(consumerDirectory, 'package.json'),
     JSON.stringify({
-      name: 'soliddd-package-consumer',
+      name: 'motionproof-package-consumer',
       private: true,
       scripts: {
-        recipes: 'soliddd recipes --json',
-        create: 'soliddd create A calm checkout confirmation --id package-smoke --out ./output --json',
+        recipes: 'motionproof recipes --json',
+        create: 'motionproof create A calm checkout confirmation --id package-smoke --out ./output --json',
       },
     }, null, 2),
   );
@@ -83,7 +89,7 @@ try {
     [
       '--input-type=module',
       '--eval',
-      'import("soliddd-motion").then((sdk) => console.log(typeof sdk.createMotion, typeof sdk.defineMotionProvider))',
+      'import("motionproof").then((sdk) => console.log(typeof sdk.createMotion, typeof sdk.defineMotionProvider))',
     ],
     { cwd: consumerDirectory, encoding: 'utf8' },
   ).trim();
@@ -130,11 +136,11 @@ try {
   const pluginLauncher = path.join(
     consumerDirectory,
     'node_modules',
-    'soliddd-motion',
+    'motionproof',
     'plugins',
-    'soliddd-motion',
+    'motionproof',
     'bin',
-    'soliddd-mcp.cjs',
+    'motionproof-mcp.cjs',
   );
   const mcpOutput = execFileSync(process.execPath, [pluginLauncher], {
     cwd: consumerDirectory,
