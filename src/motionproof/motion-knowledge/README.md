@@ -35,7 +35,10 @@ quality itself becomes a hard certification boundary.
 
 ## Local principles and references
 
-- `index.ts` is the machine-readable evaluation layer.
+- `index.ts` is the evaluator and public corpus barrel.
+- `philosophy.ts`, `emotion-mapping.ts`, `timing-easing.ts`,
+  `property-selection.ts`, `choreography.ts`, `patterns.ts`, and
+  `quality-heuristics.ts` are typed, provider-neutral reference modules.
 - Easing and duration heuristics are adapted from LottieFiles' timing/easing
   tables: use eased entrances/exits and keep feedback readable.
 - Choreography follows the bounded-stagger principle: multi-element UI motion
@@ -50,6 +53,8 @@ is introduced by this corpus.
 ## Attribution and license
 
 Adapted concepts are from the LottieFiles Motion Design Skill, distributed
-under the MIT License. MotionProof does not copy the original agent workflow;
-it expresses a small, deterministic, evidence-focused subset as TypeScript
-heuristics. Keep this attribution when extending the corpus.
+under the MIT License. The upstream license text is preserved verbatim in
+[`LICENSE-LottieFiles-MIT.txt`](./LICENSE-LottieFiles-MIT.txt). MotionProof does
+not copy the original agent workflow; it expresses a small, deterministic,
+evidence-focused subset as TypeScript heuristics. Keep this attribution when
+extending the corpus.

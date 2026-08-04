@@ -1,7 +1,23 @@
+import { CHOREOGRAPHY_GUIDANCE } from './choreography.ts';
+import { PROPERTY_SELECTION_GUIDANCE, type MotionProperty } from './property-selection.ts';
+import {
+  MOTION_QUALITY_THRESHOLDS,
+  MOTION_QUALITY_WEIGHTS,
+} from './quality-heuristics.ts';
+import { TIMING_EASING_GUIDANCE } from './timing-easing.ts';
+
+export { CHOREOGRAPHY_GUIDANCE } from './choreography.ts';
+export { EMOTION_MOTION_REFERENCE } from './emotion-mapping.ts';
+export { MOTION_PATTERNS } from './patterns.ts';
+export { MOTION_PHILOSOPHY } from './philosophy.ts';
+export { PROPERTY_SELECTION_GUIDANCE, type MotionProperty } from './property-selection.ts';
+export { MOTION_QUALITY_THRESHOLDS, MOTION_QUALITY_WEIGHTS } from './quality-heuristics.ts';
+export { TIMING_EASING_GUIDANCE } from './timing-easing.ts';
+
 /**
  * Motion-quality heuristics adapted from LottieFiles' Motion Design Skill
- * (MIT, Copyright LottieFiles). These are evidence-oriented checks for
- * MotionProof certification, not provider instructions or a creation API.
+ * (MIT, Copyright LottieFiles). Local source attribution and license live in
+ * this directory; these checks evaluate evidence rather than instruct providers.
  */
 
 export const MOTION_QUALITY_POLICY = 'soft-report-v1' as const;
@@ -41,24 +57,26 @@ export function evaluateMotionQuality(animation: Record<string, unknown>): Motio
   const propertyCommunication = evaluatePropertyCommunication(animated, warnings, strengths);
   const choreography = evaluateChoreography(layers, frameRate, warnings, strengths);
   const score = Math.round((
-    easing * 0.3
-    + timing * 0.2
-    + choreography * 0.2
-    + propertyCommunication * 0.3
+    easing * MOTION_QUALITY_WEIGHTS.easing
+    + timing * MOTION_QUALITY_WEIGHTS.timing
+    + choreography * MOTION_QUALITY_WEIGHTS.choreography
+    + propertyCommunication * MOTION_QUALITY_WEIGHTS.propertyCommunication
   ));
 
   return {
     policy: MOTION_QUALITY_POLICY,
     score,
-    passed: score >= 70,
+    passed: score >= MOTION_QUALITY_THRESHOLDS.advisoryPass,
     breakdown: { easing, timing, choreography, propertyCommunication },
     warnings,
     strengths,
   };
 }
 
+const LOTTIE_TRANSFORM_PROPERTIES: MotionProperty[] = ['p', 's', 'r', 'o'];
+
 interface AnimatedProperty {
-  name: string;
+  name: MotionProperty;
   keyframes: Record<string, unknown>[];
   layerName: string;
   startFrame: number;
@@ -69,7 +87,7 @@ function collectAnimatedProperties(layer: Record<string, unknown>): AnimatedProp
   const layerName = typeof layer.nm === 'string' ? layer.nm : 'unnamed layer';
   const result: AnimatedProperty[] = [];
 
-  for (const name of ['p', 's', 'r', 'o']) {
+  for (const name of LOTTIE_TRANSFORM_PROPERTIES) {
     const property = transform[name];
     if (!isRecord(property) || property.a !== 1 || !Array.isArray(property.k)) continue;
     const keyframes = property.k.filter(isRecord);
@@ -94,11 +112,11 @@ function evaluateTiming(
     warnings.push('Motion timing could not be evaluated from frame bounds.');
     return 0;
   }
-  if (durationSeconds < 0.12) {
-    warnings.push(`Motion resolves in ${formatSeconds(durationSeconds)}; UI feedback normally needs at least 120ms.`);
+  if (durationSeconds < TIMING_EASING_GUIDANCE.minimumFeedbackMs / 1000) {
+    warnings.push(`Motion resolves in ${formatSeconds(durationSeconds)}; UI feedback normally needs at least ${TIMING_EASING_GUIDANCE.minimumFeedbackMs}ms.`);
     return 45;
   }
-  if (durationSeconds > 20) {
+  if (durationSeconds > TIMING_EASING_GUIDANCE.maximumAmbientMs / 1000) {
     warnings.push(`Motion runs for ${formatSeconds(durationSeconds)}; long motion should be ambient and pausable.`);
     return 55;
   }
@@ -136,7 +154,7 @@ function evaluatePropertyCommunication(
     return 0;
   }
   if (properties.size === 1 && properties.has('o')) {
-    warnings.push('Important state motion is opacity-only; pair opacity with position or scale so the transition communicates meaning.');
+    warnings.push(`Important state motion is opacity-only; ${PROPERTY_SELECTION_GUIDANCE.rule}`);
     return 25;
   }
   if (properties.has('o') && (properties.has('p') || properties.has('s'))) {
@@ -165,11 +183,11 @@ function evaluateChoreography(
     return 100;
   }
   const staggerMs = ((Math.max(...uniqueStarts) - Math.min(...uniqueStarts)) / frameRate) * 1000;
-  if (staggerMs <= 500) {
+  if (staggerMs <= CHOREOGRAPHY_GUIDANCE.maxUiStaggerMs) {
     strengths.push(`Multi-layer choreography uses a bounded ${Math.round(staggerMs)}ms stagger.`);
     return 100;
   }
-  warnings.push(`Multi-layer choreography spans ${Math.round(staggerMs)}ms; keep staggered UI motion within 500ms.`);
+  warnings.push(`Multi-layer choreography spans ${Math.round(staggerMs)}ms; keep staggered UI motion within ${CHOREOGRAPHY_GUIDANCE.maxUiStaggerMs}ms.`);
   return 50;
 }
 

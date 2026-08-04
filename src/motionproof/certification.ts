@@ -88,9 +88,9 @@ export function certifyCandidate(
     },
     {
       id: 'quality',
-      label: 'Motion quality',
+      label: 'Structural quality',
       passed: inspection.quality.passed,
-      detail: `${inspection.quality.score}/100 quality score.`,
+      detail: `${inspection.quality.structuralScore}/100 structural quality score; ${inspection.quality.score}/100 displayed score includes advisory motion evidence.`,
     },
     {
       id: 'visibility',

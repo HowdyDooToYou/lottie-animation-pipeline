@@ -28,6 +28,9 @@ test('createMotion promotes one complete certified bundle with verifiable hashes
     `Expected a certified bundle, received:\n${JSON.stringify(result, null, 2)}`,
   );
   assert.equal(result.certification.certified, true);
+  const structuralQualityCheck = result.certification.checks.find((check) => check.id === 'quality');
+  assert.equal(structuralQualityCheck?.label, 'Structural quality');
+  assert.match(structuralQualityCheck?.detail ?? '', /structural quality score/);
   assert.equal(result.artifacts.length, 5);
 
   const poster = await fs.readFile(path.join(result.outputDirectory, 'poster.png'));

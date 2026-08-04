@@ -18,8 +18,17 @@ export {
   type MotionProofTheme,
 } from './contracts.ts';
 export {
+  CHOREOGRAPHY_GUIDANCE,
+  EMOTION_MOTION_REFERENCE,
   evaluateMotionQuality,
+  MOTION_PATTERNS,
+  MOTION_PHILOSOPHY,
   MOTION_QUALITY_POLICY,
+  MOTION_QUALITY_THRESHOLDS,
+  MOTION_QUALITY_WEIGHTS,
+  PROPERTY_SELECTION_GUIDANCE,
+  TIMING_EASING_GUIDANCE,
+  type MotionProperty,
   type MotionQualityBreakdown,
   type MotionQualityReport,
 } from './motion-knowledge/index.ts';
