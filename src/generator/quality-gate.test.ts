@@ -92,6 +92,17 @@ test('quality gate rejects malformed lottie structures that only look lottie-lik
   assert.ok(report.issues.some((issue) => issue.includes('Schema validation failed')));
 });
 
+test('quality gate records advisory motion-quality evidence without lowering the structural promotion floor', () => {
+  const report = qualityGate(validAnimation as Record<string, unknown>);
+
+  assert.equal(report.passed, true);
+  assert.equal(report.motion.policy, 'soft-report-v1');
+  assert.ok(report.motion.score < 100);
+  assert.ok(report.motion.warnings.some((warning) => warning.includes('linear')));
+  assert.ok(report.structuralScore >= 85);
+  assert.equal(report.score, Math.round(report.structuralScore * 0.7 + report.motion.score * 0.3));
+});
+
 test('summarizeAnimationPreview returns useful review metadata for valid lottie', () => {
   const summary = summarizeAnimationPreview(validAnimation as Record<string, unknown>);
 

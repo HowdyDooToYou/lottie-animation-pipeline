@@ -33,6 +33,23 @@ test('createMotion promotes one complete certified bundle with verifiable hashes
   const poster = await fs.readFile(path.join(result.outputDirectory, 'poster.png'));
   assert.deepEqual([...poster.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
 
+  const certificationReport = JSON.parse(
+    await fs.readFile(path.join(result.outputDirectory, 'certification.json'), 'utf8'),
+  ) as {
+    certification: {
+      quality: {
+        structuralScore: number;
+        motion: { policy: string; breakdown: Record<string, number> };
+      };
+    };
+  };
+  assert.equal(certificationReport.certification.quality.motion.policy, 'soft-report-v1');
+  assert.ok(certificationReport.certification.quality.structuralScore >= 85);
+  assert.deepEqual(
+    Object.keys(certificationReport.certification.quality.motion.breakdown).sort(),
+    ['choreography', 'easing', 'propertyCommunication', 'timing'],
+  );
+
   const manifest = JSON.parse(
     await fs.readFile(path.join(result.outputDirectory, 'manifest.json'), 'utf8'),
   ) as {

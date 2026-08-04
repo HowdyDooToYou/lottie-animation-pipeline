@@ -44,8 +44,12 @@ the promotion path.
 3. **Schema** — require strict renderable, expression-free vector Lottie JSON
    without repair; reject image/audio layers, external assets, and external
    fonts.
-4. **Quality** — require an 85/100 score, visible shapes, real keyframes,
-   bounded duration, and restrained complexity.
+4. **Quality** — require an 85/100 structural score, visible shapes, real
+   keyframes, bounded duration, and restrained complexity. MotionProof also
+   records local, provider-neutral motion evidence for easing, timing,
+   choreography, and property communication. Under `soft-report-v1`, that
+   evidence contributes 30% of the displayed quality score but the 85-point
+   structural score remains the mandatory promotion floor.
 5. **Render** — load the candidate through the expression-free
    `lottie_light` player in a network-blocked Chromium page, rasterize nine
    timeline samples, count visible pixels, and measure changed pixels.
@@ -69,8 +73,9 @@ promotes the new bundle, and restores the backup if promotion fails.
 : Self-contained Lottie review page with play/pause and reduced-motion support.
 
 `certification.json`
-: Request, provider, attempts, check results, quality evidence, and raster
-  sample evidence.
+: Request, provider, attempts, check results, structural and motion-quality
+  evidence, and raster sample evidence. Motion evidence includes score,
+  per-dimension breakdown, policy, strengths, and actionable warnings.
 
 `manifest.json`
 : Bundle format, certification label, prompt hash, provider provenance, score,

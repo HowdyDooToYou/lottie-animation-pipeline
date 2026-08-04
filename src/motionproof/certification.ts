@@ -150,9 +150,11 @@ export function certifyCandidate(
       ) / 3)),
       checks,
       quality: {
+        structuralScore: inspection.quality.structuralScore,
         score: inspection.quality.score,
         strengths: inspection.quality.strengths,
-        warnings: inspection.quality.warns,
+        warnings: [...inspection.quality.warns, ...inspection.quality.motion.warnings],
+        motion: inspection.quality.motion,
       },
       render: {
         sampledFrames: probe.sampledFrames,

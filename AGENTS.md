@@ -7,6 +7,7 @@ silently repair the production certification path.
 ## Start here
 
 - Public SDK and artifact contract: `src/motionproof/`
+- Local motion-design evaluation corpus: `src/motionproof/motion-knowledge/`
 - Deterministic recipes: `src/motionproof/recipes.ts`
 - Existing generation engine: `src/generator/`
 - Product studio: `src/App.tsx` and `src/styles.css`
@@ -21,7 +22,7 @@ and model-specific settings belong in the host application.
 A production result must:
 
 1. pass strict Lottie validation without automatic repair;
-2. score at least 85 on the structural quality gate;
+2. score at least 85 on the structural quality gate (with motion-quality evidence recorded under `soft-report-v1`);
 3. paint visible pixels in every representative Chromium sample;
 4. contain meaningful motion across at least three sampled transitions;
 5. remain within the 500 kB animation budget;

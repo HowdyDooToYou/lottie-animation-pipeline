@@ -54,6 +54,12 @@ test('themes replace known recipe colors without mutating the source recipe', ()
   assert.equal(rebuilt, original);
 });
 
+test('built-in recipes disclose the motion principles they embody', () => {
+  for (const recipe of listBuiltInRecipes() as Array<{ id: string; motionPrinciples?: string[] }>) {
+    assert.ok(recipe.motionPrinciples?.length, `${recipe.id} needs a motion-principle rationale`);
+  }
+});
+
 test('public recipe demos match the SDK recipe sources', async () => {
   for (const filename of [
     'check-mark-01.json',

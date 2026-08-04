@@ -17,6 +17,12 @@ export {
   type MotionProofSuccess,
   type MotionProofTheme,
 } from './contracts.ts';
+export {
+  evaluateMotionQuality,
+  MOTION_QUALITY_POLICY,
+  type MotionQualityBreakdown,
+  type MotionQualityReport,
+} from './motion-knowledge/index.ts';
 export { createMotion } from './create-motion.ts';
 export {
   createCandidateProvider,
