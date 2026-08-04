@@ -5,10 +5,18 @@
  */
 
 import { BRAND_COLORS } from '../brand/design-tokens.ts';
+import {
+  evaluateMotionQuality,
+  type MotionQualityReport,
+} from '../motionproof/motion-knowledge/index.ts';
 import { isLottieJson, validateLottie, validateOrFix } from './schema.ts';
 
 export interface QualityReport {
-  score: number;           // 0-100
+  /** Combined structural (70%) and advisory motion (30%) score. */
+  score: number;
+  /** The established structural promotion floor remains mandatory in v1. */
+  structuralScore: number;
+  motion: MotionQualityReport;
   passed: boolean;
   validLottie: boolean;
   issues: string[];
@@ -36,10 +44,11 @@ export const MAX_ITERATIONS = 3;
  * Run quality gate on a Lottie JSON.
  */
 export function qualityGate(animation: Record<string, unknown>): QualityReport {
+  const motion = evaluateMotionQuality(animation);
   const issues: string[] = [];
   const warns: string[] = [];
   const strengths: string[] = [];
-  let score = 50; // baseline
+  let score = 50; // structural baseline
 
   // ── 1. Structural validity ─────────────────────────────────────────────
   // Try strict first, then auto-fix if it fails. validateOrFix returns a
@@ -58,6 +67,8 @@ export function qualityGate(animation: Record<string, unknown>): QualityReport {
     // needed repair never passes the gate.
     return {
       score: fixed ? 10 : 0,
+      structuralScore: fixed ? 10 : 0,
+      motion,
       passed: false,
       validLottie: false,
       issues: [
@@ -146,12 +157,17 @@ export function qualityGate(animation: Record<string, unknown>): QualityReport {
     if (w === h) strengths.push('Square canvas (versatile)');
   }
 
-  // Clamp
-  score = Math.max(0, Math.min(100, score));
+  // Motion quality is reported and contributes to the displayed score. The
+  // long-standing structural threshold is still the promotion boundary while
+  // we tune motion heuristics against real production candidates.
+  const structuralScore = Math.max(0, Math.min(100, score));
+  const combinedScore = Math.round(structuralScore * 0.7 + motion.score * 0.3);
 
   return {
-    score,
-    passed: score >= QUALITY_THRESHOLD,
+    score: combinedScore,
+    structuralScore,
+    motion,
+    passed: structuralScore >= QUALITY_THRESHOLD,
     validLottie: true,
     issues,
     warns,

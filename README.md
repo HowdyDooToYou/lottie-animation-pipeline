@@ -29,10 +29,12 @@ MotionProof is a provider-neutral motion compiler. A model, coding agent, human,
 deterministic recipe may propose an animation. MotionProof decides whether it is
 safe to ship.
 
-It strictly validates the Lottie structure, renders nine representative frames
-in Chromium, measures visible pixels and meaningful motion, captures a
-reduced-motion poster, hashes every artifact, and atomically promotes the bundle.
-Anything below the bar returns a structured failure instead of production files.
+It strictly validates the Lottie structure, evaluates local motion-design evidence
+(easing, timing, choreography, and property communication), renders nine
+representative frames in Chromium, measures visible pixels and meaningful motion,
+captures a reduced-motion poster, hashes every artifact, and atomically promotes
+the bundle. Anything below the bar returns a structured failure instead of
+production files.
 
 ## Try it
 
@@ -150,6 +152,10 @@ It exposes:
 - `certify_motion`
 - `list_motion_recipes`
 
+Successful results include `certification.quality.motion`: local evidence for
+easing, timing, choreography, and property communication. It is advisory under
+`soft-report-v1`; the structural quality floor remains fail-closed.
+
 The shared Agent Skill and both plugin manifests live in
 [`plugins/motionproof`](plugins/motionproof):
 
@@ -184,7 +190,8 @@ Designed. Deployable. Defensible.
 | Gate | Required evidence |
 | --- | --- |
 | Strict structure | Lottie schema passes without automatic repair |
-| Motion quality | Quality score is at least 85/100 |
+| Motion quality | Structural score ≥85; displayed score includes 30% advisory motion evidence |
+| Motion evidence | Easing, timing, choreography, and property communication recorded in `certification.json` |
 | Visible rendering | Every representative sample paints pixels |
 | Meaningful motion | At least three sampled transitions materially change |
 | Delivery budget | Animation JSON is at most 500 kB |

@@ -90,6 +90,16 @@ browser rendering, poster capture, hashing, and atomic promotion.
 The certified subset is expression-free and vector-only. Do not introduce
 image/audio layers, remote assets, external fonts, or executable expressions.
 
+## Motion-quality evidence
+
+Every successful `certification.json` includes local, provider-neutral evidence
+for easing, timing, multi-element choreography, and property communication.
+MotionProof currently uses policy `soft-report-v1`: that evidence contributes to
+the displayed score and gives concrete revision guidance, while the established
+85-point structural score stays the mandatory promotion gate. Review
+`certification.quality.motion.warnings` before iterating; do not treat a
+provider's self-description as evidence.
+
 ## Definition of done
 
 Accept only a bundle whose checks all pass:

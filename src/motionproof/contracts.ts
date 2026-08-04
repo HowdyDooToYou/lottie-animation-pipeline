@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-export const MOTIONPROOF_SCHEMA_VERSION = '1.0' as const;
+import type { MotionQualityReport } from './motion-knowledge/index.ts';
+
+export const MOTIONPROOF_SCHEMA_VERSION = '1.1' as const;
 export const MOTIONPROOF_CERTIFICATION = 'MOTIONPROOF' as const;
 
 const HexColorSchema = z.string().regex(
@@ -89,9 +91,14 @@ export interface MotionProofCertification {
   score: number;
   checks: MotionProofCheck[];
   quality: {
+    /** Structural score used for the fail-closed 85-point promotion floor. */
+    structuralScore: number;
+    /** Combined structural (70%) and motion (30%) score. */
     score: number;
     strengths: string[];
     warnings: string[];
+    /** Local, provider-neutral motion-design evaluation evidence. */
+    motion: MotionQualityReport;
   };
   render: {
     sampledFrames: number[];

@@ -3,11 +3,12 @@ import executiveOrbit from './recipe-assets/sample-executive-orbit-01.json';
 import milestoneBloom from './recipe-assets/sample-milestone-bloom-01.json';
 import signalFlow from './recipe-assets/sample-signal-convergence-01.json';
 
-import type {
-  MotionCandidate,
-  MotionProvider,
-  MotionProofRequest,
-  MotionProofTheme,
+import {
+  MOTIONPROOF_SCHEMA_VERSION,
+  type MotionCandidate,
+  type MotionProvider,
+  type MotionProofRequest,
+  type MotionProofTheme,
 } from './contracts.ts';
 
 export type BuiltInRecipeId =
@@ -22,6 +23,8 @@ export interface BuiltInRecipe {
   description: string;
   bestFor: string[];
   promptExample: string;
+  /** Local corpus references that explain the recipe's intentional motion. */
+  motionPrinciples: string[];
   posterFrame: number;
   animation: Record<string, unknown>;
 }
@@ -33,6 +36,10 @@ const RECIPES: BuiltInRecipe[] = [
     description: 'Persistent rails route staggered signals into a credible processing outcome.',
     bestFor: ['agents', 'pipelines', 'data routing', 'integrations', 'systems'],
     promptExample: 'Show three AI agents routing evidence into one verified decision.',
+    motionPrinciples: [
+      'Sequential choreography directs attention through a multi-element system.',
+      'Transform motion communicates flow; the stable outcome provides resolution.',
+    ],
     posterFrame: 0.58,
     animation: signalFlow as Record<string, unknown>,
   },
@@ -42,6 +49,10 @@ const RECIPES: BuiltInRecipe[] = [
     description: 'A compact, restrained completion mark for product feedback and confirmations.',
     bestFor: ['success', 'checkout', 'completion', 'confirmation', 'done'],
     promptExample: 'Confirm that a checkout completed successfully.',
+    motionPrinciples: [
+      'Scale-plus-opacity gives success feedback a clear state transition.',
+      'A restrained settle makes the confirmation readable on repeated viewing.',
+    ],
     posterFrame: 0.72,
     animation: successSeal as Record<string, unknown>,
   },
@@ -51,6 +62,10 @@ const RECIPES: BuiltInRecipe[] = [
     description: 'A composed progress seal that lands with confidence rather than confetti.',
     bestFor: ['milestones', 'launches', 'progress', 'achievement', 'release'],
     promptExample: 'Celebrate a product launch milestone without using confetti.',
+    motionPrinciples: [
+      'A staged bloom provides setup, action, and a confident resolution.',
+      'Controlled scale and color emphasis celebrate without distracting bounce.',
+    ],
     posterFrame: 0.84,
     animation: milestoneBloom as Record<string, unknown>,
   },
@@ -60,6 +75,10 @@ const RECIPES: BuiltInRecipe[] = [
     description: 'Calm ambient intelligence orbiting a stable platform core.',
     bestFor: ['hero', 'platform', 'ecosystem', 'intelligence', 'ambient'],
     promptExample: 'Create a calm hero animation for an AI intelligence platform.',
+    motionPrinciples: [
+      'Ambient orbital motion keeps the platform core stable and legible.',
+      'Layered speed creates depth without competing with primary content.',
+    ],
     posterFrame: 0.42,
     animation: executiveOrbit as Record<string, unknown>,
   },
@@ -96,6 +115,7 @@ export function listBuiltInRecipes(): Omit<BuiltInRecipe, 'animation'>[] {
   return RECIPES.map(({ animation: _animation, ...recipe }) => ({
     ...recipe,
     bestFor: [...recipe.bestFor],
+    motionPrinciples: [...recipe.motionPrinciples],
   }));
 }
 
@@ -139,7 +159,7 @@ export function buildRecipeCandidate(request: MotionProofRequest): MotionCandida
   animation.meta = {
     ...existingMeta,
     motionproof: {
-      schemaVersion: '1.0',
+      schemaVersion: MOTIONPROOF_SCHEMA_VERSION,
       source: 'built-in-recipe',
       recipe: recipe.id,
       preset: request.preset,

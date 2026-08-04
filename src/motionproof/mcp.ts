@@ -138,7 +138,7 @@ export async function handleMcpRequest(
         protocolVersion,
         capabilities: { tools: {} },
         serverInfo: { name: 'motionproof', version: packageJson.version },
-        instructions: 'Use create_motion for a zero-key certified bundle. Use certify_motion when another agent or model already produced Lottie JSON. Only successful MOTIONPROOF results are production artifacts.',
+        instructions: 'Use create_motion for a zero-key certified bundle. Use certify_motion when another agent or model already produced Lottie JSON. Successful results include provider-neutral motion-quality evidence; only successful MOTIONPROOF results are production artifacts.',
       },
     };
   }
