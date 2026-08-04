@@ -222,7 +222,7 @@ You are GPT-5.6 Terra, executing the Motion Design Skill Integration for MotionP
 
 ## Context
 
-MotionProof is a provider-neutral Lottie animation certification pipeline at /home/tempest/lottie-animation-pipeline/. It certifies animations through structural validation and rendering proof. The goal is to absorb LottieFiles' motion design expertise (MIT licensed, https://github.com/LottieFiles/motion-design-skill) into MotionProof's certification pipeline, making it motion-literate without compromising its evidence-first philosophy.
+MotionProof is a provider-neutral Lottie animation certification pipeline in this repository. It certifies animations through structural validation and rendering proof. The goal is to absorb LottieFiles' motion design expertise (MIT licensed, https://github.com/LottieFiles/motion-design-skill) into MotionProof's certification pipeline, making it motion-literate without compromising its evidence-first philosophy.
 
 ## Your Task
 
