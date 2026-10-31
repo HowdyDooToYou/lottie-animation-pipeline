@@ -89,8 +89,8 @@
   },
   "dependencies": {
     "lottie-web": "^5.13.0",
-    "puppeteer-core": "^25.3.0",
-    "zod": "^3.23.8"
+    "puppeteer-core": "^25.16.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
